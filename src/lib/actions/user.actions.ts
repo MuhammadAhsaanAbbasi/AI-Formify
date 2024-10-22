@@ -7,7 +7,7 @@ import { db } from "@/utils/db";
 import { handleError } from "../utils";
 import { eq } from "drizzle-orm";
 
-// CREATE
+// CREATE User
 export async function createUser(user: CreateUserParams) {
     try {
 
