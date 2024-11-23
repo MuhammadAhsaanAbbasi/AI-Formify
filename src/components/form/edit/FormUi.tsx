@@ -66,10 +66,10 @@ const FormUi = ({ formData, onFieldsAdd, onFieldUpdate, onDeletedField, enabledS
                                 </div>
                                 :
                                 field.fieldType == "checkbox" ?
-                                    <div className='w-full my-3'>
+                                    <div className='w-full my-3 space-y-2'>
                                         <Label className='text-gray-500'>{field.label}</Label>
                                         {field.options ? field.options.map((option, index) => (
-                                            <div key={index} className="flex items-center gap-2">
+                                            <div key={index} className="flex items-center gap-2 my-2">
                                                 <Checkbox id={option} />
                                                 <label
                                                     htmlFor={option}

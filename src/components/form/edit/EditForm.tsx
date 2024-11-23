@@ -133,8 +133,8 @@ const EditForm = ({ defaultValue, updateField, deletedField }: EditFormProps) =>
                         )}
 
                         {defaultValue.fieldType === "checkbox" && options && (
-                            <div className="grid grid-cols-3 items-center gap-4">
-                                <Label htmlFor="option">Options</Label>
+                            <div className="flex flex-col justify-center gap-4">
+                                <Label htmlFor="option">Options:</Label>
                                 {options?.map((option, index) => (
                                     <div key={index} className='flex items-center gap-2'>
                                         <Input

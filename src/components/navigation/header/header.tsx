@@ -21,7 +21,7 @@ const Header = () => {
                     width={100}
                     height={50}
                     className='w-auto h-auto'
-                    priority
+                    priority={true}
                 />
                 <span className='text-2xl font-bold text-primary'>AIFormify</span>
             </Link>
