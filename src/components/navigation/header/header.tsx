@@ -16,7 +16,7 @@ const Header = () => {
                 className='flex items-center'
             >
                 <Image
-                    src={"https://hrk-boutique.s3.ap-south-1.amazonaws.com/Interro.AI.png"}
+                    src={"https://myapplication-logos.s3.ap-south-1.amazonaws.com/ai-formify.png"}
                     alt='AIFormify'
                     width={100}
                     height={50}

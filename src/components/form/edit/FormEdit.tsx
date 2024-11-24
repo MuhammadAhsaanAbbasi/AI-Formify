@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { ArrowLeftIcon, Share, SquareArrowOutUpRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-import FormController from './FormController'
+import FormController from '@/components/form/controllers/FormController'
 import FormUi from './FormUi'
 import { useUser } from '@clerk/nextjs'
 import { getFormById, updateFields } from '@/lib/actions/form.actions'
@@ -61,7 +61,7 @@ const FormEdit = ({ form_id }: { form_id: string }) => {
     const onFieldUpdate = (field: UpdateFields, index: number) => {
         jsonFormData.fields[index].label = field.label;
         jsonFormData.fields[index].placeholder = field.placeholder;
-        if(jsonFormData.fields[index].options){
+        if (jsonFormData.fields[index].options) {
             jsonFormData.fields[index].options = field.options;
         }
         setJsonFormData(jsonFormData);
@@ -80,17 +80,17 @@ const FormEdit = ({ form_id }: { form_id: string }) => {
     const updateFieldInDb = async () => {
         const response = await updateFields(formParams, form_id, UserId);
         if (response?.success) {
-                toast({
-                    title: "Successfully Updated!",
-                    description: response.success,
-                    variant: "success",
-                    duration: 2000,
-                    action: (
-                        <ToastAction altText="Close">Close</ToastAction>
-                    ),
-                })
+            toast({
+                title: "Successfully Updated!",
+                description: response.success,
+                variant: "success",
+                duration: 2000,
+                action: (
+                    <ToastAction altText="Close">Close</ToastAction>
+                ),
+            })
         }
-        if(response?.error) {
+        if (response?.error) {
             toast({
                 title: "Error!",
                 description: response?.error,
@@ -105,7 +105,7 @@ const FormEdit = ({ form_id }: { form_id: string }) => {
 
 
     useEffect(() => {
-        if(updateFieldTrigger){
+        if (updateFieldTrigger) {
             updateFieldInDb();
         }
     }, [updateFieldTrigger, updateFieldInDb])
@@ -150,9 +150,7 @@ const FormEdit = ({ form_id }: { form_id: string }) => {
                 </div>
             </div>
             <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-                <div className='border rounded-lg shadow-md p-5'>
-                    <FormController form_id={form_id} />
-                </div>
+                <FormController form_id={form_id} />
                 <div className='md:col-span-2 border rounded-lg shadow-md p-5 flex justify-center items-center'>
                     <FormUi
                         formData={jsonFormData}
