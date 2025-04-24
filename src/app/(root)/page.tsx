@@ -9,7 +9,3 @@ export default function Home() {
     </main>
   );
 }
-
-// py-4 px-8 sm:px-16 md:px-24
-
-// https://hrk-boutique.s3.ap-south-1.amazonaws.com/InterroAI.png
