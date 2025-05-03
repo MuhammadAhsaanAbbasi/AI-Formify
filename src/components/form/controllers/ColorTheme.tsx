@@ -1,4 +1,4 @@
-import React, { Dispatch } from 'react'
+import React, { Dispatch, SetStateAction } from 'react'
 import {
     Select,
     SelectContent,
@@ -9,14 +9,14 @@ import {
 import { themes } from '@/constants/constants'
 
 interface IProps {
-    setSelectedTheme: (val: string) => {}
+    setSelectedTheme: Dispatch<SetStateAction<string>>;
 }
 
 
 const ColorTheme = ({ setSelectedTheme }:IProps) => {
     return (
-        <div className='space-y-2'>
-            <h2>
+        <div className='space-y-5'>
+            <h2 className='text-lg font-medium'>
                 Color Theme
             </h2>
             <Select onValueChange={(value) => setSelectedTheme(value)}>

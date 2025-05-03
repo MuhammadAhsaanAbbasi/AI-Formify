@@ -4,14 +4,15 @@ import FormBorder from './FormBorder'
 import FormBackground from './FormBackground'
 
 interface IProps {
-    setSelectedTheme: (val: string) => {};
+    setSelectedTheme: Dispatch<SetStateAction<string>>;
+    setBgGradient: Dispatch<SetStateAction<string>>;
 }
 
-const FormController = ({setSelectedTheme}: IProps) => {
+const FormController = ({setSelectedTheme, setBgGradient}: IProps) => {
     return (
-        <div className='border rounded-lg shadow-md p-5 space-y-3'>
+        <div className='border rounded-lg shadow-md p-5 space-y-5'>
             <ColorTheme setSelectedTheme={(value) => setSelectedTheme(value)} />
-            <FormBackground />
+            <FormBackground setBgGradient={(value) => setBgGradient(value)} />
             <FormBorder />
         </div>
     )
