@@ -84,3 +84,29 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .flex-center {
+    @apply flex justify-center items-center;
+  }
+
+  .flex-between {
+    @apply flex justify-between items-center;
+  }
+  
+  .auth_input {
+    @apply w-full h-9 border rounded-md  placeholder:text-xs;
+  }
+  
+  .auth_input_error {
+    @apply border-red-500;
+  }
+  
+  .auth_input_success {
+    @apply border-green-500;
+  }
+  
+  .auth_input_disabled {
+    @apply bg-gray-200 cursor-not-allowed;
+  }
+}

@@ -1,7 +1,8 @@
-import { SignUp } from '@clerk/nextjs'
-import Image from 'next/image'
+import { LoginForm } from '@/components/auth/LoginForm';
+import Image from 'next/image';
+import React from 'react'
 
-export default function Page() {
+const LoginPage = () => {
     return (
         <section className="bg-white dark:bg-gray-900">
             <div className="lg:grid lg:min-h-screen lg:grid-cols-12">
@@ -31,7 +32,7 @@ export default function Page() {
                         </a>
 
                         <h2 className="mt-6 text-2xl font-bold text-white sm:text-3xl md:text-4xl">
-                            Welcome to AI-Formify
+                            Welcome Back to AI-Formify
                         </h2>
 
                         <p className="mt-4 leading-relaxed text-white/90">
@@ -65,7 +66,7 @@ export default function Page() {
                             </a>
 
                             <h1 className="mt-2 text-2xl font-bold text-gray-900 sm:text-3xl md:text-4xl dark:text-white">
-                                Welcome to AI-Formify
+                                Welcome Back to AI-Formify
                             </h1>
 
                             <p className="mt-4 leading-relaxed text-gray-500 dark:text-gray-400">
@@ -73,10 +74,12 @@ export default function Page() {
                                 quibusdam aperiam voluptatum.
                             </p>
                         </div>
-                        <SignUp />
+                        <LoginForm />
                     </div>
                 </main>
             </div>
         </section>
     )
 }
+
+export default LoginPage;

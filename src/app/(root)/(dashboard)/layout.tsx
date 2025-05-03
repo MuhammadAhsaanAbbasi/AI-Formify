@@ -3,13 +3,12 @@ import { Metadata } from 'next';
 import SideNav from '@/components/navigation/SideNav';
 
 export const metadata: Metadata = {
-    title: "AIFormify",
-    description: "AI Form Builder",
+    title: "AI-Formify",
+    description: "AI Form Generator",
     icons: {
-        icon: "https://hrk-boutique.s3.ap-south-1.amazonaws.com/Interro.AI.png",
+      icon: "https://myapplication-logos.s3.ap-south-1.amazonaws.com/ai-formify.png",
     },
-};
-
+  };
 const DashboardLayout = ({ children }: Readonly<{ children: ReactNode }>) => {
     return (
         <main>
