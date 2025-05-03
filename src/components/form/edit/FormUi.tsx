@@ -17,14 +17,16 @@ interface FormProps {
     onFieldUpdate: (field: UpdateFields, index: number) => void;
     onDeletedField: (index: number) => void;
     enabledSignIn?: boolean;
-    isEditable?: boolean
+    isEditable?: boolean;
+    selectedTheme?: string
 }
 
 
-const FormUi = ({ formData, onFieldsAdd, onFieldUpdate, onDeletedField, enabledSignIn = false, isEditable = true }: FormProps) => {
+const FormUi = ({ formData, onFieldsAdd, onFieldUpdate, selectedTheme,
+    onDeletedField, enabledSignIn = false, isEditable = true }: FormProps) => {
     const { isSignedIn } = useUser();
     return (
-        <form className='border-2 p-5 md:w-[700px] rounded-lg'>
+        <form className='border-2 p-5 md:w-[700px] rounded-lg' data-theme={selectedTheme}>
             <h1 className='text-2xl font-bold text-center'>{formData.formTitle}</h1>
             <h2 className='text-lg text-gray-700 text-center'>{formData.formHeading}</h2>
             {formData.fields.map((field, index) => (
@@ -121,9 +123,9 @@ const FormUi = ({ formData, onFieldsAdd, onFieldUpdate, onDeletedField, enabledS
             ))}
             <div className='flex justify-between items-center gap-3'>
                 {!enabledSignIn ?
-                    <Button type="submit">Submit</Button> :
+                    <button type="submit" className='btn btn-primary'>Submit</button> :
                     isSignedIn ?
-                        <Button type="submit">Submit</Button> :
+                        <button type="submit" className='btn btn-primary'>Submit</button> :
                         <Button type="button">
                             <SignInButton mode="modal">
                                 SignIn Before Submit

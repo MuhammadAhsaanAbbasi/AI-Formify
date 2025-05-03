@@ -33,6 +33,7 @@ const FormEdit = ({ form_id }: { form_id: string }) => {
     });
 
     const [formParams, setFormParams] = useState<string>('')
+    const [selectedTheme, setSelectedTheme] = useState<string>('')
 
     const [updateFieldTrigger, setUpdateFieldTrigger] = useState<number>();
 
@@ -150,13 +151,15 @@ const FormEdit = ({ form_id }: { form_id: string }) => {
                 </div>
             </div>
             <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-                <FormController form_id={form_id} />
-                <div className='md:col-span-2 border rounded-lg shadow-md p-5 flex justify-center items-center'>
+                <FormController setSelectedTheme={async (val) => setSelectedTheme(val)} />
+                <div className='md:col-span-2 border rounded-lg shadow-md p-5 flex justify-center items-center' 
+                >
                     <FormUi
                         formData={jsonFormData}
                         onFieldUpdate={onFieldUpdate}
                         onDeletedField={onFieldDeleted}
                         onFieldsAdd={onFieldsAdd}
+                        selectedTheme={selectedTheme}
                     />
                 </div>
             </div>
