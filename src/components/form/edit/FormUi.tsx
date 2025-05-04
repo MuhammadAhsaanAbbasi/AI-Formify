@@ -16,17 +16,25 @@ interface FormProps {
     onFieldsAdd: (fields: z.infer<typeof fieldSchema>) => void;
     onFieldUpdate: (field: UpdateFields, index: number) => void;
     onDeletedField: (index: number) => void;
+    selectedStyle: BorderStyle;
     enabledSignIn?: boolean;
     isEditable?: boolean;
     selectedTheme?: string
 }
 
 
-const FormUi = ({ formData, onFieldsAdd, onFieldUpdate, selectedTheme,
+const FormUi = ({ formData, onFieldsAdd, onFieldUpdate, selectedStyle, selectedTheme,
     onDeletedField, enabledSignIn = false, isEditable = true }: FormProps) => {
     const { isSignedIn } = useUser();
+    const boxShadow = selectedStyle.key == 'boxshadow' ? selectedStyle.value : '';
+    const border = selectedStyle.key == 'border' ? selectedStyle.value : '';
     return (
-        <form className='border-2 p-5 md:w-[700px] rounded-lg' data-theme={selectedTheme}>
+        <form className='border-2 p-5 md:w-[700px] rounded-lg' data-theme={selectedTheme}
+            style={{
+                boxShadow: boxShadow,
+                border: border
+            }}
+        >
             <h1 className='text-2xl font-bold text-center'>{formData.formTitle}</h1>
             <h2 className='text-lg text-gray-700 text-center'>{formData.formHeading}</h2>
             {formData.fields.map((field, index) => (

@@ -66,3 +66,11 @@ declare interface UpdateUserParams {
 
 
 declare type fieldType = 'text' | 'email' | 'number' | 'tel' | 'select' | 'checkbox' | 'radio' ;
+
+interface BorderStyle {
+        id:number,
+        name:string,
+        img:string,
+        value:string,
+        key:string
+}

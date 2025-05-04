@@ -1,8 +1,12 @@
 import { styles } from '@/constants/constants';
 import Image from 'next/image';
-import React from 'react'
+import React, { Dispatch, SetStateAction } from 'react'
 
-const FormBorder = () => {
+interface IProps {
+    setStyles: Dispatch<SetStateAction<BorderStyle>>;
+}
+
+const FormBorder = ({ setStyles }: IProps) => {
     return (
         <div className='my-2 space-y-5'>
             <h2 className='text-lg font-medium'>
@@ -12,7 +16,9 @@ const FormBorder = () => {
                 {
                     styles.map((style, index) => (
                         <div key={index} className='space-y-2'>
-                            <div className='hover:cursor-pointer hover:border-2 hover:border-black rounded-lg transition duration-300'>
+                            <div className='hover:cursor-pointer hover:border-2 hover:border-black rounded-lg transition duration-300'
+                            onClick={() => setStyles(style)}
+                            >
                                 <Image
                                     src={style.img}
                                     alt={style.name}

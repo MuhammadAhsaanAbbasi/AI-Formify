@@ -91,4 +91,24 @@ export const updateFields = async (formParams: string, form_id: string, user_id:
         }
         return { message: error }
     }
+};
+
+
+export const updateControllerFields = async (value: string, column: string, form_id: string, user_id:string) => {
+    try {
+        const users = await db.select().from(User).where(eq(User.clerkId, user_id));
+        const response = await db.update(Forms).set({
+            [column]: value
+        }).where(and(eq(Forms.formID, form_id), eq(Forms.user_id, users[0].id)))
+        .returning({ id: Forms.id })
+
+        if(response){
+            return { success: "Form updated successfully" }
+        }
+    } catch (error) {
+        if (error instanceof Error) {
+            return { error: "Invalid credentials!", message: error.message };
+        }
+        return { message: error }
+    }
 }

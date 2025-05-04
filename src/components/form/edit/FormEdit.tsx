@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react'
 import FormController from '@/components/form/controllers/FormController'
 import FormUi from './FormUi'
 import { useUser } from '@clerk/nextjs'
-import { getFormById, updateFields } from '@/lib/actions/form.actions'
+import { getFormById, updateControllerFields, updateFields } from '@/lib/actions/form.actions'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -34,7 +34,15 @@ const FormEdit = ({ form_id }: { form_id: string }) => {
 
     const [formParams, setFormParams] = useState<string>('')
     const [selectedTheme, setSelectedTheme] = useState<string>('')
-    const [bgGradient, setBgGradient] = useState<string>('')
+    const [bgGradient, setBgGradient] = useState<string>('');
+    const [selectedStyle, setSelectedStyle] = useState<BorderStyle>({
+        id: 1,
+        name: '',
+        key:'',
+        value: '',
+        img: ''
+    });
+
 
     const [updateFieldTrigger, setUpdateFieldTrigger] = useState<number>();
 
@@ -103,6 +111,10 @@ const FormEdit = ({ form_id }: { form_id: string }) => {
                 ),
             })
         }
+    };
+
+    const UpdateControllers = async (val: string, column: string) => {
+        const req = await updateControllerFields(val, column, form_id, UserId);
     }
 
 
@@ -155,6 +167,7 @@ const FormEdit = ({ form_id }: { form_id: string }) => {
                 <FormController 
                 setSelectedTheme={(val) => setSelectedTheme(val)} 
                 setBgGradient={(val) => setBgGradient(val)}
+                setStyles={(val) => setSelectedStyle(val)}
                 />
                 <div className='md:col-span-2 border rounded-lg shadow-md p-5 flex justify-center items-center' 
                 style={{backgroundImage: bgGradient}}
@@ -165,6 +178,7 @@ const FormEdit = ({ form_id }: { form_id: string }) => {
                         onDeletedField={onFieldDeleted}
                         onFieldsAdd={onFieldsAdd}
                         selectedTheme={selectedTheme}
+                        selectedStyle={selectedStyle}
                     />
                 </div>
             </div>
