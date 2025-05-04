@@ -74,3 +74,12 @@ interface BorderStyle {
         value:string,
         key:string
 }
+
+declare interface ResponseFormField {
+    fieldName: string;
+    fieldValue: unknown;
+    fieldType: 'text' | 'email' | 'number' | 'tel' | 'select' | 'checkbox' | 'radio' ;
+}
+
+
+// interface FormResponse {}

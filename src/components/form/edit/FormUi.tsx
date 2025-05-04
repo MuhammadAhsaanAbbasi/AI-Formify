@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { SignInButton, useUser } from '@clerk/nextjs'
-import React from 'react'
+import React, { ChangeEvent, FormEvent, useRef, useState } from 'react'
 import EditForm from './EditForm'
 import AddFormFields from './AddFormFields'
 import * as z from "zod"
@@ -23,17 +23,48 @@ interface FormProps {
 }
 
 
+
 const FormUi = ({ formData, onFieldsAdd, onFieldUpdate, selectedStyle, selectedTheme,
     onDeletedField, enabledSignIn = false, isEditable = true }: FormProps) => {
     const { isSignedIn } = useUser();
     const boxShadow = selectedStyle.key == 'boxshadow' ? selectedStyle.value : '';
     const border = selectedStyle.key == 'border' ? selectedStyle.value : '';
+
+    // const inputRef = useRef<HTMLInputElement>(null);
+    const [jsonFormData, setJsonFormData] = useState<ResponseFormField[]>([]);
+
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value, type } = e.target;
+        const fieldType = type as ResponseFormField['fieldType'];
+        setJsonFormData((prev) => {
+            // build the new entry
+            const newEntry: ResponseFormField = { fieldName: name, fieldValue: value, fieldType };
+            // find if it already exists
+            const idx = prev.findIndex(item => item.fieldName === name);
+            if (idx !== -1) {
+                // overwrite at idx
+                const updated = [...prev];
+                updated[idx] = newEntry;
+                return updated;
+            } else {
+                // append new
+                return [...prev, newEntry];
+            }
+        });
+    };
+
+
+    const formSubmit = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        console.log(jsonFormData);
+    }
     return (
         <form className='border-2 p-5 md:w-[700px] rounded-lg' data-theme={selectedTheme}
             style={{
                 boxShadow: boxShadow,
                 border: border
             }}
+            onSubmit={formSubmit}
         >
             <h1 className='text-2xl font-bold text-center'>{formData.formTitle}</h1>
             <h2 className='text-lg text-gray-700 text-center'>{formData.formHeading}</h2>
@@ -110,12 +141,15 @@ const FormUi = ({ formData, onFieldsAdd, onFieldUpdate, selectedStyle, selectedT
                                             )}
                                         </Label>
                                         <Input
+                                            name={field.fieldName}
                                             type={field.fieldType}
                                             placeholder={field.placeholder}
-                                            name={field.fieldName}
-                                            className='bg-transparent'
                                             required={field.required}
+                                            className="bg-transparent"
+                                            onBlur={handleInputChange}  // now only fires once, when focus leaves
+                                        // ref={inputRef}
                                         />
+
                                     </div>
                     }
                     {isEditable && (
@@ -130,15 +164,14 @@ const FormUi = ({ formData, onFieldsAdd, onFieldUpdate, selectedStyle, selectedT
                 </div>
             ))}
             <div className='flex justify-between items-center gap-3'>
-                {!enabledSignIn ?
-                    <button type="submit" className='btn btn-primary'>Submit</button> :
-                    isSignedIn ?
-                        <button type="submit" className='btn btn-primary'>Submit</button> :
-                        <Button type="button">
-                            <SignInButton mode="modal">
-                                SignIn Before Submit
-                            </SignInButton>
-                        </Button>
+                <button type="submit" className='btn btn-primary'>Submit</button>
+                {enabledSignIn &&
+                    !isSignedIn &&
+                    <Button type="button">
+                        <SignInButton mode="modal">
+                            SignIn Before Submit
+                        </SignInButton>
+                    </Button>
                 }
                 {isEditable && (
                     <AddFormFields
