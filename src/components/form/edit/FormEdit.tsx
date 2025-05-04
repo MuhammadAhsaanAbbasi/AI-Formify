@@ -197,6 +197,7 @@ const FormEdit = ({ form_id }: { form_id: string }) => {
                         onFieldsAdd={onFieldsAdd}
                         selectedTheme={selectedTheme}
                         selectedStyle={selectedStyle}
+                        form_id={form_id}
                     />
                 </div>
             </div>

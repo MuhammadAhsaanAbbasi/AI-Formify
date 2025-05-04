@@ -29,7 +29,7 @@ declare interface FormParams {
     style: string | null;
     user_id: number | null;
     createdAt: string | null;
-    formID: string;
+    mockID: string;
     enabledSignIn: boolean | null;
 }
 

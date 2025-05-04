@@ -1,4 +1,4 @@
-import Form from '@/components/form/Form'
+import FormWrapper from '@/components/form/form'
 import React from 'react'
 
 interface Iprops {
@@ -10,7 +10,7 @@ interface Iprops {
 
 const FormPage = ({params : {form_id}}: Iprops) => {
     return (
-        <Form form_id={form_id} />
+        <FormWrapper form_id={form_id} />
     )
 }
 

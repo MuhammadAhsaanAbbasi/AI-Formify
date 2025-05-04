@@ -13,11 +13,8 @@ const defaultBorderStyle: BorderStyle = {
     key: "",
 };
 
-interface FormWrapperProps {
-    form_id: string;
-}
 
-export default function FormWrapper({ form_id }: FormWrapperProps) {
+export default function FormWrapper({ form_id }: { form_id: string }) {
     const [record, setRecord] = useState<FormParams | null>(null);
     const [jsonForm, setJsonForm] = useState<JsonFormParams | null>(null);
     const [selectedStyle, setSelectedStyle] = useState<BorderStyle>(defaultBorderStyle);
@@ -78,6 +75,7 @@ export default function FormWrapper({ form_id }: FormWrapperProps) {
                     selectedTheme={record.theme ?? undefined}
                     isEditable={false}
                     enabledSignIn={Boolean(record.enabledSignIn)}
+                    form_id={form_id}
                 />
             </div>
         </main>

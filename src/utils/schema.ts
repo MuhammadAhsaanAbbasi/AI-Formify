@@ -25,13 +25,29 @@ export const Forms = pgTable("forms", {
     style:varchar('style'),
     user_id: integer('user_id'),
     createdAt: varchar("createdAt"),
-    formID: varchar("mockID").notNull(),
+    mockID: varchar("mockID").notNull(),
     enabledSignIn:boolean('enabledSignIn').default(false),
 })
 
-export const FormRelations = relations(Forms, ({ one }) => ({
+export const FormRelations = relations(Forms, ({ one, many }) => ({
     user: one(User, {
         fields: [Forms.user_id],
         references: [User.id],
     }),
+    responses: many(userResponses),
 }));
+
+export const userResponses = pgTable('userResponses', {
+    id:serial('id').primaryKey(),
+    jsonResponse:text('jsonResponse').notNull(),
+    createdBy:varchar('createdBy').default('anonymus'),
+    createdAt:varchar('createdAt').notNull(),
+    form_id: integer('form_id'),
+})
+
+export const UserResponseRelations = relations(userResponses, ({ one }) => ({
+    form: one(Forms, {
+        fields: [userResponses.form_id],
+        references: [Forms.id],
+    }),
+}))

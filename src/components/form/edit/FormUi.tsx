@@ -5,33 +5,39 @@ import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { SignInButton, useUser } from '@clerk/nextjs'
-import React, { ChangeEvent, FormEvent, useRef, useState } from 'react'
+import React, { ChangeEvent, FormEvent, LegacyRef, useRef, useState, useTransition } from 'react'
 import EditForm from './EditForm'
 import AddFormFields from './AddFormFields'
 import * as z from "zod"
 import { fieldSchema } from '@/schemas/form'
+import { CheckedState } from '@radix-ui/react-checkbox'
+import { formResponseSubmit } from '@/lib/actions/form.actions'
+import { ToastAction } from '@/components/ui/toast'
+import { toast } from '@/hooks/use-toast'
 
 interface FormProps {
+    form_id: string;
     formData: JsonFormParams;
-    onFieldsAdd: (fields: z.infer<typeof fieldSchema>) => void;
-    onFieldUpdate: (field: UpdateFields, index: number) => void;
-    onDeletedField: (index: number) => void;
     selectedStyle: BorderStyle;
     enabledSignIn?: boolean;
     isEditable?: boolean;
-    selectedTheme?: string
-}
+    selectedTheme?: string;
+    onFieldsAdd: (fields: z.infer<typeof fieldSchema>) => void;
+    onFieldUpdate: (field: UpdateFields, index: number) => void;
+    onDeletedField: (index: number) => void;
+};
 
 
-
-const FormUi = ({ formData, onFieldsAdd, onFieldUpdate, selectedStyle, selectedTheme,
+const FormUi = ({ formData, form_id, onFieldsAdd, onFieldUpdate, selectedStyle, selectedTheme,
     onDeletedField, enabledSignIn = false, isEditable = true }: FormProps) => {
     const { isSignedIn } = useUser();
-    const boxShadow = selectedStyle.key == 'boxshadow' ? selectedStyle.value : '';
-    const border = selectedStyle.key == 'border' ? selectedStyle.value : '';
+    const boxShadow = selectedStyle?.key == 'boxshadow' ? selectedStyle.value : '';
+    const border = selectedStyle?.key == 'border' ? selectedStyle.value : '';
 
     // const inputRef = useRef<HTMLInputElement>(null);
     const [jsonFormData, setJsonFormData] = useState<ResponseFormField[]>([]);
+    const [isPending, startTransition] = useTransition();
+    const formRef=useRef<HTMLFormElement>(null);
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value, type } = e.target;
@@ -53,10 +59,86 @@ const FormUi = ({ formData, onFieldsAdd, onFieldUpdate, selectedStyle, selectedT
         });
     };
 
+    const handleSelectChange = (name: string, value: string) => {
+        setJsonFormData((prev) => {
+            // build the new entry
+            const newEntry: ResponseFormField = { fieldName: name, fieldValue: value, fieldType: 'select' };
+            // find if it already exists
+            const idx = prev.findIndex(item => item.fieldName === name);
+            if (idx !== -1) {
+                // overwrite at idx
+                const updated = [...prev];
+                updated[idx] = newEntry;
+                return updated;
+            } else {
+                // append new
+                return [...prev, newEntry];
+            }
+        });
+    }
 
-    const formSubmit = (event: FormEvent<HTMLFormElement>) => {
+    const handleCheckBoxChange = (fieldName: string, itemName: string, value: CheckedState) => {
+        setJsonFormData((prev) => {
+            // build the new entry
+            const newEntry: ResponseFormField = { fieldName: fieldName, fieldValue: value, fieldType: 'checkbox' };
+            // find if it already exists
+            const idx = prev.findIndex(item => item.fieldName === fieldName);
+            if (idx !== -1) {
+                // overwrite at idx
+                const updated = [...prev];
+                updated[idx] = newEntry;
+                return updated;
+            } else {
+                // append new
+                return [...prev, newEntry];
+            }
+        });
+    }
+
+
+    const formSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        console.log(jsonFormData);
+        startTransition(() => {
+            formResponseSubmit(jsonFormData, form_id)
+            .then((data) => {
+                if (data?.success) {
+                    toast({
+                        title: "Successfully Updated!",
+                        description: data.success,
+                        variant: "success",
+                        duration: 2000,
+                        action: (
+                            <ToastAction altText="Close">Close</ToastAction>
+                        ),
+                    })
+                }
+                if (data?.error) {
+                    toast({
+                        title: "Error!",
+                        description: data?.message,
+                        duration: 2000,
+                        variant: "destructive",
+                        action: (
+                            <ToastAction altText="Close">Close</ToastAction>
+                        ),
+                    })
+                }
+            })
+            .catch((error) => {
+                toast({
+                    title: "Error!",
+                    description: error,
+                    duration: 2000,
+                    variant: "destructive",
+                    action: (
+                        <ToastAction altText="Close">Close</ToastAction>
+                    ),
+                })
+            })
+            .finally(() => {
+                formRef.current?.reset();
+            })
+        })
     }
     return (
         <form className='border-2 p-5 md:w-[700px] rounded-lg' data-theme={selectedTheme}
@@ -65,6 +147,7 @@ const FormUi = ({ formData, onFieldsAdd, onFieldUpdate, selectedStyle, selectedT
                 border: border
             }}
             onSubmit={formSubmit}
+            ref={formRef}
         >
             <h1 className='text-2xl font-bold text-center'>{formData.formTitle}</h1>
             <h2 className='text-lg text-gray-700 text-center'>{formData.formHeading}</h2>
@@ -74,7 +157,10 @@ const FormUi = ({ formData, onFieldsAdd, onFieldUpdate, selectedStyle, selectedT
                         field.fieldType == "select" ?
                             <div className='w-full my-3'>
                                 <Label className='text-gray-500'>{field.label}</Label>
-                                <Select required={field.required} name={field.fieldName}>
+                                <Select required={field.required} name={field.fieldName}
+                                    onValueChange={(e) => handleSelectChange(field.fieldName, e)}
+                                    disabled={isPending}
+                                >
                                     <SelectTrigger className="w-full bg-transparent">
                                         <SelectValue placeholder={field.placeholder} />
                                     </SelectTrigger>
@@ -91,12 +177,15 @@ const FormUi = ({ formData, onFieldsAdd, onFieldUpdate, selectedStyle, selectedT
                             field.fieldType == "radio" ?
                                 <div className='w-full my-3'>
                                     <Label className='text-gray-500'>{field.label}</Label>
-                                    <RadioGroup required={field.required} defaultValue={field.fieldTitle}>
+                                    <RadioGroup required={field.required} defaultValue={field.fieldTitle}
+                                        disabled={isPending}
+                                    >
                                         {field.options?.map((option, index) => (
                                             <div key={index} className="flex items-center space-x-2">
                                                 <RadioGroupItem
                                                     value={option}
                                                     id={index.toString()}
+                                                    onClick={() => handleSelectChange(field.fieldName, option)}
                                                 >
                                                     {option}
                                                 </RadioGroupItem>
@@ -111,7 +200,9 @@ const FormUi = ({ formData, onFieldsAdd, onFieldUpdate, selectedStyle, selectedT
                                         <Label className='text-gray-500'>{field.label}</Label>
                                         {field.options ? field.options.map((option, index) => (
                                             <div key={index} className="flex items-center gap-2 my-2">
-                                                <Checkbox id={option} />
+                                                <Checkbox id={option} disabled={isPending}
+                                                    onCheckedChange={(e) => handleCheckBoxChange(field.label, option, e)}
+                                                />
                                                 <label
                                                     htmlFor={option}
                                                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -122,7 +213,7 @@ const FormUi = ({ formData, onFieldsAdd, onFieldUpdate, selectedStyle, selectedT
                                         ))
                                             :
                                             <div className="flex items-center gap-2 my-2">
-                                                <Checkbox id={field.fieldName} />
+                                                <Checkbox id={field.fieldName} disabled={isPending} />
                                                 <label
                                                     htmlFor={field.fieldName}
                                                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -147,7 +238,7 @@ const FormUi = ({ formData, onFieldsAdd, onFieldUpdate, selectedStyle, selectedT
                                             required={field.required}
                                             className="bg-transparent"
                                             onBlur={handleInputChange}  // now only fires once, when focus leaves
-                                        // ref={inputRef}
+                                            disabled={isPending}
                                         />
 
                                     </div>
@@ -164,7 +255,12 @@ const FormUi = ({ formData, onFieldsAdd, onFieldUpdate, selectedStyle, selectedT
                 </div>
             ))}
             <div className='flex justify-between items-center gap-3'>
-                <button type="submit" className='btn btn-primary'>Submit</button>
+                {isEditable ? (
+                    <button type="button" className='btn btn-primary'>Submit</button>
+                ) : (
+
+                    <button type="submit" className='btn btn-primary'>Submit</button>
+                )}
                 {enabledSignIn &&
                     !isSignedIn &&
                     <Button type="button">
