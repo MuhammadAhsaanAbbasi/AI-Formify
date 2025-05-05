@@ -23,7 +23,8 @@ import { ToastAction } from '@/components/ui/toast'
 import * as z from "zod"
 import { fieldSchema } from '@/schemas/form'
 import Link from 'next/link'
-
+import { RWebShare } from "react-web-share";
+import ShareButton from '@/components/shared/ShareButton'
 
 const FormEdit = ({ form_id }: { form_id: string }) => {
 
@@ -39,7 +40,7 @@ const FormEdit = ({ form_id }: { form_id: string }) => {
     const [selectedStyle, setSelectedStyle] = useState<BorderStyle>({
         id: 0,
         name: '',
-        key:'',
+        key: '',
         value: '',
         img: ''
     });
@@ -167,28 +168,35 @@ const FormEdit = ({ form_id }: { form_id: string }) => {
                 </AlertDialog>
                 <div className='flex gap-2 items-center'>
                     <Link href={`/form/${form_id}/`} target="_blank">
-                    <Button className='flex items-center gap-2'
+                        <Button className='flex items-center gap-2'
                         // onClick={() => router.push(`/form/${form_id}`)}
-                    >
-                        <SquareArrowOutUpRight className='h-5 w-5' />
-                        <span>Live Preview</span>
-                    </Button>
+                        >
+                            <SquareArrowOutUpRight className='h-5 w-5' />
+                            <span>Live Preview</span>
+                        </Button>
                     </Link>
-                    <Button className='flex items-center gap-2 bg-green-500 hover:bg-green-400 transition-all'>
-                        <Share className='h-5 w-5' />
-                        <span>Share</span>
-                    </Button>
+                    <ShareButton text={jsonFormData.formHeading}
+                        title={jsonFormData.formTitle}
+                        url={form_id}
+                    >
+                        <Button className='flex items-center gap-2 bg-green-500 hover:bg-green-400 transition-all'>
+                            <Share className='h-5 w-5' />
+                            <span>Share</span>
+                        </Button>
+                    </ShareButton>
                 </div>
             </div>
             <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-                <FormController 
-                setSelectedTheme={(val) => {setSelectedTheme(val); 
-                    UpdateControllers(z.string().parse(val), 'theme')}} 
-                setBgGradient={(val) => {setBgGradient(val); UpdateControllers(z.string().parse(val), 'background')}}
-                setStyles={(val) => {setSelectedStyle(val); UpdateControllers(JSON.stringify(val), 'style')}}
+                <FormController
+                    setSelectedTheme={(val) => {
+                        setSelectedTheme(val);
+                        UpdateControllers(z.string().parse(val), 'theme')
+                    }}
+                    setBgGradient={(val) => { setBgGradient(val); UpdateControllers(z.string().parse(val), 'background') }}
+                    setStyles={(val) => { setSelectedStyle(val); UpdateControllers(JSON.stringify(val), 'style') }}
                 />
-                <div className='md:col-span-2 border rounded-lg shadow-md p-5 flex justify-center items-center' 
-                style={{backgroundImage: bgGradient}}
+                <div className='md:col-span-2 border rounded-lg shadow-md p-5 flex justify-center items-center'
+                    style={{ backgroundImage: bgGradient }}
                 >
                     <FormUi
                         formData={jsonFormData}
