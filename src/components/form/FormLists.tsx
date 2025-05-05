@@ -1,9 +1,9 @@
 "use client"
 import { useUser } from '@clerk/nextjs';
 import React, { useEffect, useState } from 'react';
-import FormListItems from './FormListItems';
+import FormListItems from '@/components/form/FormListItems';
 import { getFormsData } from '@/lib/actions/form.actions';
-import { Loading } from '../shared/loading';
+import { Loading } from '@/components/shared/loading';
 
 const FormLists = () => {
     const { user } = useUser();

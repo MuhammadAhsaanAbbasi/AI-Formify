@@ -1,5 +1,5 @@
-import CreateForm from '@/components/dashboard/CreateForm'
-import FormLists from '@/components/dashboard/FormLists'
+import CreateForm from '@/components/form/CreateForm'
+import FormLists from '@/components/form/FormLists'
 import React from 'react'
 
 function DashboardPage() {
