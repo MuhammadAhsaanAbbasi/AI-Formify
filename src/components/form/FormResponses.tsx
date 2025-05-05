@@ -21,6 +21,8 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Check, X } from "lucide-react";
+import { Button } from "../ui/button";
+import * as XLSX from "xlsx";
 
 export default function FormResponses() {
     const { user } = useUser();
@@ -70,35 +72,62 @@ export default function FormResponses() {
 
     // derive your column headers from the form blueprint
     // const columns = submissions?.map((f) => f.m) ?? [];
+    const exportToExcel = () =>{
+        console.log(`submissions : ${submissions}`);
+        let jsonData: any = [];
+        submissions.forEach((submission) => {
+            let data: any = {};
+            submission.forEach((field) => {
+                data[field.fieldName] = field.fieldValue;
+            });
+            jsonData.push(data);
+        })
+        console.log(`jsonData : ${jsonData}`);
+        const worksheet = XLSX.utils.json_to_sheet(jsonData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+       
+        XLSX.writeFile(workbook, `${jsonBlueprint?.formTitle}.xlsx`);
+    }
+
 
     return (
         <section className="space-y-6 my-5 md:my-8">
-            {/* —————— form selector —————— */}
-            <Select
-                onValueChange={(val) => {
-                    setFormId(parseInt(val));
-                    // update blueprint too
-                    const found = forms.find((f) => f.id === parseInt(val));
-                    if (found) setJsonBlueprint(JSON.parse(found.jsonFormResp));
-                    // clear old submissions
-                    setSubmissions([]);
-                }}  defaultValue={String(formId)} value={String(formId)}
-            >
-                <SelectTrigger className="w-[220px]">
-                    <SelectValue placeholder="Select a form…" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectGroup>
-                        {/* <SelectLabel>Forms</SelectLabel> */}
-                        {forms.map((f) => (
-                            <SelectItem key={f.id} value={String(f.id)}>
-                                {JSON.parse(f.jsonFormResp).formTitle}
-                            </SelectItem>
-                        ))}
-                    </SelectGroup>
-                </SelectContent>
-            </Select>
-
+            {/* —————— form selector & Export Responses —————— */}
+            <div className="flex items-center justify-between">
+                <div className="flex flex-col md:flex-row items-center gap-2">
+                    <h6 className="text-base lg:text-lg text-gray-500 font-medium">
+                        Select a form
+                    </h6>
+                    <Select
+                        onValueChange={(val) => {
+                            setFormId(parseInt(val));
+                            // update blueprint too
+                            const found = forms.find((f) => f.id === parseInt(val));
+                            if (found) setJsonBlueprint(JSON.parse(found.jsonFormResp));
+                            // clear old submissions
+                            setSubmissions([]);
+                        }} defaultValue={String(formId)} value={String(formId)}
+                    >
+                        <SelectTrigger className="w-[220px]">
+                            <SelectValue placeholder="Select a form…" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                {/* <SelectLabel>Forms</SelectLabel> */}
+                                {forms.map((f) => (
+                                    <SelectItem key={f.id} value={String(f.id)}>
+                                        {JSON.parse(f.jsonFormResp).formTitle}
+                                    </SelectItem>
+                                ))}
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                </div>
+                <Button onClick={exportToExcel}>
+                    Export Responses
+                </Button>
+            </div>
             {/* —————— responses table —————— */}
             <Table className="w-full overflow-auto">
                 <TableHeader>
