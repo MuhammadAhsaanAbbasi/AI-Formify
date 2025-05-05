@@ -33,12 +33,12 @@ const SideNav = () => {
     const path = usePathname();
 
     return (
-        <div className='h-screen shadow-md border-2 bg-secondary rounded-md'>
-            <div className='p-5'>
+        <div className='h-screen w-auto shadow-md border-2 bg-secondary rounded-md'>
+            <div className='p-4 space-y-5'>
                 {
                     menuList.map((menu) => (
                         <Link key={menu.id} href={menu.path}
-                            className={`flex items-center gap-5 p-4 mb-3 rounded-lg cursor-pointer hover:bg-primary hover:text-white transition-colors text-lg font-medium
+                            className={`flex items-center gap-5 p-3 rounded-lg cursor-pointer hover:bg-primary hover:text-white transition-colors text-lg font-medium
                             ${path === menu.path && "bg-primary text-white font-semibold"}`}
                         >
                             <menu.icon />
@@ -47,7 +47,7 @@ const SideNav = () => {
                     ))
                 }
             </div>
-            <div className='fixed bottom-7 p-6 w-64'>
+            <div className='fixed bottom-7 p-6 w-56'>
                 <Button className='w-full'>+ Create Form</Button>
                 <div className='my-8'>
                     <Progress value={50} />

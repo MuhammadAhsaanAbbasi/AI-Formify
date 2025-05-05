@@ -57,6 +57,21 @@ export const getFormsData = async (userId: string) => {
     }
 }
 
+export const getFormsResponses = async (formId: number) => {
+    try {
+        const form = await db.select().from(Forms).where(eq(Forms.id, formId));
+        const response = await db.select().from(userResponses)
+            .where(eq(userResponses.form_id, form[0].id))
+            .orderBy(desc(userResponses.id));
+        return { success: response }
+    } catch (error) {
+        if (error instanceof Error) {
+            return { error: "Invalid credentials!", message: error.message };
+        }
+        return { message: error }
+    }
+}
+
 export const getFormById = async (mockID: string, userID: string) => {
     try {
         const users = await db.select().from(User).where(eq(User.clerkId, userID));

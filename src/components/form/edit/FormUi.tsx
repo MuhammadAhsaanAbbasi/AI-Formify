@@ -77,7 +77,7 @@ const FormUi = ({ formData, form_id, onFieldsAdd, onFieldUpdate, selectedStyle, 
         });
     }
 
-    const handleCheckBoxChange = (fieldName: string, itemName: string, value: CheckedState) => {
+    const handleCheckBoxChange = (fieldName: string,  value: CheckedState, itemName?: string) => {
         setJsonFormData((prev) => {
             // build the new entry
             const newEntry: ResponseFormField = { fieldName: fieldName, fieldValue: value, fieldType: 'checkbox' };
@@ -151,14 +151,14 @@ const FormUi = ({ formData, form_id, onFieldsAdd, onFieldUpdate, selectedStyle, 
         >
             <h1 className='text-2xl font-bold text-center'>{formData.formTitle}</h1>
             <h2 className='text-lg text-gray-700 text-center'>{formData.formHeading}</h2>
-            {formData.fields.map((field, index) => (
+            {formData.fields.map((field: FormField, index) => (
                 <div key={field.label} className='flex items-center gap-3'>
                     {
                         field.fieldType == "select" ?
                             <div className='w-full my-3'>
                                 <Label className='text-gray-500'>{field.label}</Label>
                                 <Select required={field.required} name={field.fieldName}
-                                    onValueChange={(e) => handleSelectChange(field.fieldName, e)}
+                                    onValueChange={(e) => handleSelectChange(field.label, e)}
                                     disabled={isPending}
                                 >
                                     <SelectTrigger className="w-full bg-transparent">
@@ -185,7 +185,7 @@ const FormUi = ({ formData, form_id, onFieldsAdd, onFieldUpdate, selectedStyle, 
                                                 <RadioGroupItem
                                                     value={option}
                                                     id={index.toString()}
-                                                    onClick={() => handleSelectChange(field.fieldName, option)}
+                                                    onClick={() => handleSelectChange(field.label, option)}
                                                 >
                                                     {option}
                                                 </RadioGroupItem>
@@ -201,7 +201,7 @@ const FormUi = ({ formData, form_id, onFieldsAdd, onFieldUpdate, selectedStyle, 
                                         {field.options ? field.options.map((option, index) => (
                                             <div key={index} className="flex items-center gap-2 my-2">
                                                 <Checkbox id={option} disabled={isPending}
-                                                    onCheckedChange={(e) => handleCheckBoxChange(field.label, option, e)}
+                                                    onCheckedChange={(e) => handleCheckBoxChange(field.label, e, option)}
                                                 />
                                                 <label
                                                     htmlFor={option}
@@ -213,7 +213,9 @@ const FormUi = ({ formData, form_id, onFieldsAdd, onFieldUpdate, selectedStyle, 
                                         ))
                                             :
                                             <div className="flex items-center gap-2 my-2">
-                                                <Checkbox id={field.fieldName} disabled={isPending} />
+                                                <Checkbox id={field.fieldName} 
+                                                onCheckedChange={(e) => handleCheckBoxChange(field.label, e, field.fieldName)}
+                                                disabled={isPending} />
                                                 <label
                                                     htmlFor={field.fieldName}
                                                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -232,7 +234,7 @@ const FormUi = ({ formData, form_id, onFieldsAdd, onFieldUpdate, selectedStyle, 
                                             )}
                                         </Label>
                                         <Input
-                                            name={field.fieldName}
+                                            name={field.label}
                                             type={field.fieldType}
                                             placeholder={field.placeholder}
                                             required={field.required}

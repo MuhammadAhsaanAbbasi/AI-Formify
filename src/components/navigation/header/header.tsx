@@ -18,7 +18,7 @@ const Header = () => {
                 <Image
                     src={"https://myapplication-logos.s3.ap-south-1.amazonaws.com/ai-formify.png"}
                     alt='AIFormify'
-                    width={100}
+                    width={80}
                     height={50}
                     className='w-auto h-auto'
                     priority={true}

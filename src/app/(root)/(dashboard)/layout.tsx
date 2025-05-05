@@ -12,10 +12,10 @@ export const metadata: Metadata = {
 const DashboardLayout = ({ children }: Readonly<{ children: ReactNode }>) => {
     return (
         <main>
-            <div className='md:w-64 fixed'>
+            <div className='md:w-56 fixed'>
                 <SideNav />
             </div>
-            <div className='md:ml-64 bg-white'>
+            <div className='md:ml-56 bg-white'>
                 {children}
 
             </div>
