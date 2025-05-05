@@ -1,9 +1,8 @@
 "use server";
-
 import { formSchema } from "@/schemas/form"
 import { db } from "@/utils/db"
 import { chatSession } from "@/utils/gemini"
-import { Forms, User } from "@/utils/schema"
+import { Forms, User, userResponses } from "@/utils/schema"
 import { and, desc, eq } from "drizzle-orm"
 import moment from 'moment'
 import * as z from "zod"
@@ -27,11 +26,11 @@ export const generateform = async (values: z.infer<typeof formSchema>, userId: s
             const response = await db.insert(Forms).values({
                 jsonFormResp: FormResponse,
                 user_id: user[0].id,
-                formID: uuidv4(),
+                mockID: uuidv4(),
                 createdAt: moment().format('DD/MM/yyyy') // Corrected date format
-            }).returning({ formId: Forms.formID })
+            }).returning({ mockID: Forms.mockID })
 
-            return { res: response[0].formId, success: "Form generated successfully" }
+            return { res: response[0].mockID, success: "Form generated successfully" }
         } else {
             return { error: "Something went wrong in Form" }
         }
@@ -47,8 +46,8 @@ export const getFormsData = async (userId: string) => {
     try {
         const users = await db.select().from(User).where(eq(User.clerkId, userId));
         const response: FormParams[] = await db.select().from(Forms)
-        .where(eq(Forms.user_id, users[0].id))
-        .orderBy(desc(Forms.id));
+            .where(eq(Forms.user_id, users[0].id))
+            .orderBy(desc(Forms.id));
         return { success: response }
     } catch (error) {
         if (error instanceof Error) {
@@ -58,11 +57,26 @@ export const getFormsData = async (userId: string) => {
     }
 }
 
-export const getFormById = async (formId: string, userID: string) => {
+export const getFormsResponses = async (formId: number) => {
+    try {
+        const form = await db.select().from(Forms).where(eq(Forms.id, formId));
+        const response = await db.select().from(userResponses)
+            .where(eq(userResponses.form_id, form[0].id))
+            .orderBy(desc(userResponses.id));
+        return { success: response }
+    } catch (error) {
+        if (error instanceof Error) {
+            return { error: "Invalid credentials!", message: error.message };
+        }
+        return { message: error }
+    }
+}
+
+export const getFormById = async (mockID: string, userID: string) => {
     try {
         const users = await db.select().from(User).where(eq(User.clerkId, userID));
         const response: FormParams[] = await db.select().from(Forms)
-        .where(and(eq(Forms.formID, formId), eq(Forms.user_id, users[0].id)));
+            .where(and(eq(Forms.user_id, users[0].id), eq(Forms.mockID, mockID)));
         return { success: response[0] }
     } catch (error) {
         if (error instanceof Error) {
@@ -73,17 +87,62 @@ export const getFormById = async (formId: string, userID: string) => {
 }
 
 
-export const updateFields = async (formParams: string, form_id: string, user_id:string) => {
+export const updateFields = async (formParams: string, form_id: string, user_id: string) => {
     try {
         const users = await db.select().from(User).where(eq(User.clerkId, user_id));
         const response = await db.update(Forms).
-        set({
-            jsonFormResp: formParams,
-        })
-        .where(and(eq(Forms.formID, form_id), eq(Forms.user_id, users[0].id)))
+            set({
+                jsonFormResp: formParams,
+            })
+            .where(and(eq(Forms.mockID, form_id), eq(Forms.user_id, users[0].id)))
 
-        if(response){
+        if (response) {
             return { success: "Form updated successfully" }
+        }
+    } catch (error) {
+        if (error instanceof Error) {
+            return { error: "Invalid credentials!", message: error.message };
+        }
+        return { message: error }
+    }
+};
+
+
+export const updateControllerFields = async (value: string, column: string, form_id: string, user_id: string) => {
+    try {
+        const users = await db.select().from(User).where(eq(User.clerkId, user_id));
+        const response = await db.update(Forms).set({
+            [column]: value
+        }).where(and(eq(Forms.mockID, form_id), eq(Forms.user_id, users[0].id)))
+            .returning({ id: Forms.id })
+
+        if (response) {
+            return { success: "Form updated successfully" }
+        }
+    } catch (error) {
+        if (error instanceof Error) {
+            return { error: "Invalid credentials!", message: error.message };
+        }
+        return { message: error }
+    }
+}
+
+export const formResponseSubmit = async (jsonFormData: ResponseFormField[], form_id: string) => {
+    try {
+        console.log(`form_id : ${form_id}`)
+        const req = await db.select().from(Forms).where(eq(Forms.mockID, form_id));
+
+        console.log(`req : ${req[0]?.id}`)
+        
+        const result=await db.insert(userResponses)
+        .values({
+          jsonResponse: JSON.stringify(jsonFormData),
+          createdAt:moment().format('DD/MM/yyy'),
+          form_id: req[0].id,
+        })
+
+        if (result) {
+            return { success: "Form submitted successfully" }
         }
     } catch (error) {
         if (error instanceof Error) {

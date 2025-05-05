@@ -19,6 +19,7 @@ import { eq } from 'drizzle-orm';
 import { Forms } from '@/utils/schema';
 import { toast } from '@/hooks/use-toast';
 import { ToastAction } from '../ui/toast';
+import ShareButton from '../shared/ShareButton';
 
 interface IFormProps {
     formRecords: FormParams;
@@ -28,7 +29,7 @@ interface IFormProps {
 
 const FormListItems = ({ formRecords, jsonForm, onDelete }: IFormProps) => {
     const [isLoading, setLoading] = useState(false);
-    const router = useRouter(); 
+    const router = useRouter();
 
     const handleDelete = async () => {
         setLoading(true);
@@ -91,12 +92,17 @@ const FormListItems = ({ formRecords, jsonForm, onDelete }: IFormProps) => {
             </div>
             <hr className='my-4'></hr>
             <div className='flex justify-between items-center gap-2'>
-                <Button variant={"ghost"} className='flex justify-center items-center gap-2'>
-                    <Share />
-                    <span>Share</span>
-                </Button>
+                <ShareButton text={jsonForm.formHeading}
+                    title={jsonForm.formTitle}
+                    url={formRecords.mockID}
+                >
+                    <Button variant={"ghost"} className='flex justify-center items-center gap-2'>
+                        <Share />
+                        <span>Share</span>
+                    </Button>
+                </ShareButton>
                 <Button className='flex justify-center items-center gap-2'
-                    onClick={() => router.push(`/form/${formRecords.formID}/edit`)}
+                    onClick={() => router.push(`/form/${formRecords.mockID}/edit`)}
                 >
                     <Edit />
                     <span>Edit</span>

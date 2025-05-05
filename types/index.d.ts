@@ -29,7 +29,7 @@ declare interface FormParams {
     style: string | null;
     user_id: number | null;
     createdAt: string | null;
-    formID: string;
+    mockID: string;
     enabledSignIn: boolean | null;
 }
 
@@ -66,3 +66,20 @@ declare interface UpdateUserParams {
 
 
 declare type fieldType = 'text' | 'email' | 'number' | 'tel' | 'select' | 'checkbox' | 'radio' ;
+
+interface BorderStyle {
+        id:number,
+        name:string,
+        img:string,
+        value:string,
+        key:string
+}
+
+declare interface ResponseFormField {
+    fieldName: string;
+    fieldValue: unknown;
+    fieldType: 'text' | 'email' | 'number' | 'tel' | 'select' | 'checkbox' | 'radio' ;
+}
+
+
+// interface FormResponse {}
