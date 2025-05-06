@@ -3,9 +3,11 @@
 import { LibraryBig, MessageSquare, Shield } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button } from '../ui/button'
 import { Progress } from '../ui/progress'
+import { getFormsData } from '@/lib/actions/form.actions'
+import { useUser } from '@clerk/nextjs'
 
 const menuList = [
     {
@@ -29,8 +31,24 @@ const menuList = [
 ]
 
 const SideNav = () => {
-    const [formsCreated, setFormsCreated] = useState(0)
+    const [formPercentage, setFormPercentange] = useState(0)
+    const [formlistLength, setFormlistLength] = useState<number>()
     const path = usePathname();
+
+    const {user} = useUser();
+    const UserId = user?.id as string;
+
+    useEffect(() => {
+        const formData = async () => {
+            const response = await getFormsData(UserId);
+            if (response.success) {
+                setFormlistLength(response?.success.length);
+                const percentage = (response.success.length / 3) * 100;
+                setFormPercentange(percentage);
+            }
+        };
+        formData();
+    })
 
     return (
         <div className='h-screen w-auto shadow-md border-2 bg-secondary rounded-md'>
@@ -50,8 +68,8 @@ const SideNav = () => {
             <div className='fixed bottom-7 p-6 w-56'>
                 <Button className='w-full'>+ Create Form</Button>
                 <div className='my-8'>
-                    <Progress value={50} />
-                    <h2 className='text-sm my-2 text-gray-600'><span>{formsCreated} out of 3</span> Form Created</h2>
+                    <Progress value={formPercentage} />
+                    <h2 className='text-sm my-2 text-gray-600'><span>{formlistLength} out of 3</span> Form Created</h2>
                     {/* Conditionally Rendered */}
                     <h2 className='text-sm my-2 text-gray-600'>Upgrade your plan for unlimited AI form build</h2>
                 </div>
