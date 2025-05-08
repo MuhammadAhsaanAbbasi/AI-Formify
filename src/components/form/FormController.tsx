@@ -11,14 +11,17 @@ import { themes } from '@/constants/constants'
 import { bgGradients, styles } from '@/constants/constants';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '../ui/checkbox';
+import { CheckedState } from '@radix-ui/react-checkbox';
 
 interface IProps {
     setSelectedTheme: Dispatch<SetStateAction<string>>;
     setBgGradient: Dispatch<SetStateAction<string>>;
     setStyles: Dispatch<SetStateAction<BorderStyle>>;
+    setSignInEnable: Dispatch<SetStateAction<CheckedState>>;
 }
 
-const FormController = ({ setSelectedTheme, setBgGradient, setStyles }: IProps) => {
+const FormController = ({ setSelectedTheme, setBgGradient, setStyles, setSignInEnable }: IProps) => {
     const [showMore, setShowMore] = useState(6);
     return (
         <div className='border rounded-lg shadow-md p-5 space-y-5'>
@@ -117,6 +120,14 @@ const FormController = ({ setSelectedTheme, setBgGradient, setStyles }: IProps) 
                         ))
                     }
                 </div>
+            </div>
+
+            {/* Form SignIn Enabler */}
+            <div className='flex items-center gap-4 my-10'>
+                <Checkbox onCheckedChange={(value) => setSignInEnable(value)} />
+                <h2>
+                    Enable Social Authentication Before Submitting the form
+                </h2>
             </div>
         </div>
     )

@@ -14,6 +14,8 @@ import { CheckedState } from '@radix-ui/react-checkbox'
 import { formResponseSubmit } from '@/lib/actions/form.actions'
 import { ToastAction } from '@/components/ui/toast'
 import { toast } from '@/hooks/use-toast'
+import { LoaderCircle } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 interface FormProps {
     form_id: string;
@@ -37,7 +39,9 @@ const FormUi = ({ formData, form_id, onFieldsAdd, onFieldUpdate, selectedStyle, 
     // const inputRef = useRef<HTMLInputElement>(null);
     const [jsonFormData, setJsonFormData] = useState<ResponseFormField[]>([]);
     const [isPending, startTransition] = useTransition();
-    const formRef=useRef<HTMLFormElement>(null);
+    const formRef = useRef<HTMLFormElement>(null);
+
+    const router = useRouter();
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value, type } = e.target;
@@ -77,7 +81,7 @@ const FormUi = ({ formData, form_id, onFieldsAdd, onFieldUpdate, selectedStyle, 
         });
     }
 
-    const handleCheckBoxChange = (fieldName: string,  value: CheckedState, itemName?: string) => {
+    const handleCheckBoxChange = (fieldName: string, value: CheckedState, itemName?: string) => {
         setJsonFormData((prev) => {
             // build the new entry
             const newEntry: ResponseFormField = { fieldName: fieldName, fieldValue: value, fieldType: 'checkbox' };
@@ -100,44 +104,45 @@ const FormUi = ({ formData, form_id, onFieldsAdd, onFieldUpdate, selectedStyle, 
         event.preventDefault();
         startTransition(() => {
             formResponseSubmit(jsonFormData, form_id)
-            .then((data) => {
-                if (data?.success) {
-                    toast({
-                        title: "Successfully Updated!",
-                        description: data.success,
-                        variant: "success",
-                        duration: 2000,
-                        action: (
-                            <ToastAction altText="Close">Close</ToastAction>
-                        ),
-                    })
-                }
-                if (data?.error) {
+                .then((data) => {
+                    if (data?.success) {
+                        toast({
+                            title: "Successfully Updated!",
+                            description: data.success,
+                            variant: "success",
+                            duration: 2000,
+                            action: (
+                                <ToastAction altText="Close">Close</ToastAction>
+                            ),
+                        })
+                        router.push("/")
+                    }
+                    if (data?.error) {
+                        toast({
+                            title: "Error!",
+                            description: data?.message,
+                            duration: 2000,
+                            variant: "destructive",
+                            action: (
+                                <ToastAction altText="Close">Close</ToastAction>
+                            ),
+                        })
+                    }
+                })
+                .catch((error) => {
                     toast({
                         title: "Error!",
-                        description: data?.message,
+                        description: error,
                         duration: 2000,
                         variant: "destructive",
                         action: (
                             <ToastAction altText="Close">Close</ToastAction>
                         ),
                     })
-                }
-            })
-            .catch((error) => {
-                toast({
-                    title: "Error!",
-                    description: error,
-                    duration: 2000,
-                    variant: "destructive",
-                    action: (
-                        <ToastAction altText="Close">Close</ToastAction>
-                    ),
                 })
-            })
-            .finally(() => {
-                formRef.current?.reset();
-            })
+                .finally(() => {
+                    formRef.current?.reset();
+                })
         })
     }
     return (
@@ -213,9 +218,9 @@ const FormUi = ({ formData, form_id, onFieldsAdd, onFieldUpdate, selectedStyle, 
                                         ))
                                             :
                                             <div className="flex items-center gap-2 my-2">
-                                                <Checkbox id={field.fieldName} 
-                                                onCheckedChange={(e) => handleCheckBoxChange(field.label, e, field.fieldName)}
-                                                disabled={isPending} />
+                                                <Checkbox id={field.fieldName}
+                                                    onCheckedChange={(e) => handleCheckBoxChange(field.label, e, field.fieldName)}
+                                                    disabled={isPending} />
                                                 <label
                                                     htmlFor={field.fieldName}
                                                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -261,7 +266,13 @@ const FormUi = ({ formData, form_id, onFieldsAdd, onFieldUpdate, selectedStyle, 
                     <button type="button" className='btn btn-primary'>Submit</button>
                 ) : (
 
-                    <button type="submit" className='btn btn-primary'>Submit</button>
+                    <button type="submit" className='btn btn-primary'
+                    disabled={!isSignedIn || isPending}
+                    >
+                        {
+                            isPending ? <LoaderCircle className="animate-spin" /> : "Submit"
+                        }
+                    </button>
                 )}
                 {enabledSignIn &&
                     !isSignedIn &&

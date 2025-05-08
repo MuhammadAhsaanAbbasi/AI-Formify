@@ -25,6 +25,7 @@ import { fieldSchema } from '@/schemas/form'
 import Link from 'next/link'
 import { RWebShare } from "react-web-share";
 import ShareButton from '@/components/shared/ShareButton'
+import { CheckedState } from '@radix-ui/react-checkbox'
 
 const FormEdit = ({ form_id }: { form_id: string }) => {
 
@@ -37,6 +38,7 @@ const FormEdit = ({ form_id }: { form_id: string }) => {
     const [formParams, setFormParams] = useState<string>('')
     const [selectedTheme, setSelectedTheme] = useState<string>('')
     const [bgGradient, setBgGradient] = useState<string>('');
+    const [signInEnable, setSignInEnable] = useState<CheckedState>(false);
     const [selectedStyle, setSelectedStyle] = useState<BorderStyle>({
         id: 0,
         name: '',
@@ -118,7 +120,7 @@ const FormEdit = ({ form_id }: { form_id: string }) => {
         }
     };
 
-    const UpdateControllers = async (val: string, column: string) => {
+    const UpdateControllers = async (val: unknown, column: string) => {
         const req = await updateControllerFields(val, column, form_id, UserId);
         if (req?.success) {
             toast({
@@ -194,6 +196,9 @@ const FormEdit = ({ form_id }: { form_id: string }) => {
                     }}
                     setBgGradient={(val) => { setBgGradient(val); UpdateControllers(z.string().parse(val), 'background') }}
                     setStyles={(val) => { setSelectedStyle(val); UpdateControllers(JSON.stringify(val), 'style') }}
+                    setSignInEnable={(val) => {
+                         UpdateControllers(JSON.stringify(val), 'enabledSignIn') 
+                        }}
                 />
                 <div className='md:col-span-2 border rounded-lg shadow-md p-5 flex justify-center items-center'
                     style={{ backgroundImage: bgGradient }}

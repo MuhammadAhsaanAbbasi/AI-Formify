@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import FormUi from "./edit/FormUi";
-import { getFormById } from "@/lib/actions/form.actions";
+import { getFormById, getFormByMockId } from "@/lib/actions/form.actions";
 import { useUser } from "@clerk/nextjs";
 
 
@@ -27,7 +27,7 @@ export default function FormWrapper({ form_id }: { form_id: string }) {
     useEffect(() => {
 
         async function fetchData() {
-            const response = await getFormById(form_id, userId);
+            const response = await getFormByMockId(form_id);
 
             if (response.success) {
                 const rec = response.success;

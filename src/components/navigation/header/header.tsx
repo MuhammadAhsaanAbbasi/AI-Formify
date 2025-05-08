@@ -11,19 +11,19 @@ const Header = () => {
     const path = usePathname();
     const {isSignedIn} = useUser();
     return (
-        <header className='px-6 sm:px-12 md:px-18 flex justify-between items-center gap-3 shadow-md border-b-2 border-solid'>
+        <header className='px-6 sm:px-12 md:px-18 flex justify-between items-center gap-3 shadow-md border-b-2 border-solid sticky top-0 z-50 bg-white'>
             <Link href={"/"}
-                className='flex items-center'
+                className='flex items-center md:gap-2'
             >
                 <Image
                     src={"https://myapplication-logos.s3.ap-south-1.amazonaws.com/ai-formify.png"}
                     alt='AIFormify'
                     width={80}
                     height={50}
-                    className='w-auto h-auto'
+                    className='w-20 h-20 md:w-auto md:h-auto'
                     priority={true}
                 />
-                <span className='text-2xl font-bold text-primary'>AIFormify</span>
+                <span className='text-xl md:text-2xl font-bold text-primary'>AIFormify</span>
             </Link>
             {
                 isSignedIn ? 

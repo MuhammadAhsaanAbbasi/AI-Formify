@@ -30,7 +30,7 @@ const menuList = [
     }
 ]
 
-const SideNav = () => {
+export const SideNav = () => {
     const [formPercentage, setFormPercentange] = useState(0)
     const [formlistLength, setFormlistLength] = useState<number>()
     const path = usePathname();
@@ -51,7 +51,7 @@ const SideNav = () => {
     })
 
     return (
-        <div className='h-screen w-auto shadow-md border-2 bg-secondary rounded-md'>
+        <div className='hidden md:block h-screen w-auto shadow-md border-2 bg-secondary rounded-md'>
             <div className='p-4 space-y-5'>
                 {
                     menuList.map((menu) => (
@@ -76,6 +76,4 @@ const SideNav = () => {
             </div>
         </div>
     )
-}
-
-export default SideNav
+};
