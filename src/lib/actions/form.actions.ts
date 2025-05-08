@@ -86,6 +86,19 @@ export const getFormById = async (mockID: string, userID: string) => {
     }
 }
 
+export const getFormByMockId = async (mockID: string) => {
+    try {
+        const response: FormParams[] = await db.select().from(Forms)
+            .where(eq(Forms.mockID, mockID));
+        return { success: response[0] }
+    } catch (error) {
+        if (error instanceof Error) {
+            return { error: "Invalid credentials!", message: error.message };
+        }
+        return { message: error }
+    }
+}
+
 
 export const updateFields = async (formParams: string, form_id: string, user_id: string) => {
     try {
@@ -108,7 +121,7 @@ export const updateFields = async (formParams: string, form_id: string, user_id:
 };
 
 
-export const updateControllerFields = async (value: string, column: string, form_id: string, user_id: string) => {
+export const updateControllerFields = async (value: unknown, column: string, form_id: string, user_id: string) => {
     try {
         const users = await db.select().from(User).where(eq(User.clerkId, user_id));
         const response = await db.update(Forms).set({

@@ -120,7 +120,7 @@ const FormEdit = ({ form_id }: { form_id: string }) => {
         }
     };
 
-    const UpdateControllers = async (val: string, column: string) => {
+    const UpdateControllers = async (val: unknown, column: string) => {
         const req = await updateControllerFields(val, column, form_id, UserId);
         if (req?.success) {
             toast({
