@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { Metadata } from 'next';
-import SideNav from '@/components/navigation/SideNav';
+import {SideNav} from '@/components/navigation/SideNav';
 import Header from '@/components/navigation/header/header';
 
 export const metadata: Metadata = {

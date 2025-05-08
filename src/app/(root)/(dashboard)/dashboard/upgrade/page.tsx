@@ -1,8 +1,11 @@
+import UpgradeTier from '@/components/widget/UpgradeTier'
 import React from 'react'
 
 const UpgradePage = () => {
     return (
-        <div>UpgradePage</div>
+        <main>
+            <UpgradeTier />
+        </main>
     )
 }
 
