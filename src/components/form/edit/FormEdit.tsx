@@ -35,10 +35,10 @@ const FormEdit = ({ form_id }: { form_id: string }) => {
         fields: []
     });
 
-    const [formParams, setFormParams] = useState<string>('')
+    // const [formParams, setFormParams] = useState<string>('')
     const [selectedTheme, setSelectedTheme] = useState<string>('')
     const [bgGradient, setBgGradient] = useState<string>('');
-    const [signInEnable, setSignInEnable] = useState<CheckedState>(false);
+    // const [signInEnable, setSignInEnable] = useState<CheckedState>(false);
     const [selectedStyle, setSelectedStyle] = useState<BorderStyle>({
         id: 0,
         name: '',
@@ -48,7 +48,8 @@ const FormEdit = ({ form_id }: { form_id: string }) => {
     });
 
 
-    const [updateFieldTrigger, setUpdateFieldTrigger] = useState<number>();
+    type Trigger = { time: number; payload: string };
+    const [updateTrigger, setUpdateTrigger] = useState<Trigger | null>(null);
 
     const router = useRouter();
     const { user } = useUser();
@@ -59,7 +60,7 @@ const FormEdit = ({ form_id }: { form_id: string }) => {
             const response = await getFormById(form_id, UserId)
             if (response.success) {
                 setJsonFormData(JSON.parse(response.success.jsonFormResp));
-                setFormParams(response.success.jsonFormResp);
+                // setFormParams(response.success.jsonFormResp);
                 setSelectedTheme((response.success.theme as string));
                 setSelectedStyle(JSON.parse((response.success.style as string)));
                 setBgGradient((response.success.background as string));
@@ -68,12 +69,16 @@ const FormEdit = ({ form_id }: { form_id: string }) => {
         formData();
     }, [UserId, form_id]);
 
-    const onFieldsAdd = (fields: z.infer<typeof fieldSchema>) => {
-        jsonFormData.fields.push(fields);
+    const onFieldsAdd = (newField: z.infer<typeof fieldSchema>) => {
+        jsonFormData.fields.push(newField);
         setJsonFormData(jsonFormData);
-        setFormParams(JSON.stringify(jsonFormData));
-        setUpdateFieldTrigger(Date.now());
-    }
+        console.log(`jsonFormData : ${JSON.stringify(jsonFormData)}`);
+        // setFormParams(JSON.stringify(jsonFormData));
+        // setUpdateTrigger({
+        //     time: Date.now(),
+        //     payload: JSON.stringify(jsonFormData),
+        // });
+    };
 
     const onFieldUpdate = (field: UpdateFields, index: number) => {
         jsonFormData.fields[index].label = field.label;
@@ -82,43 +87,49 @@ const FormEdit = ({ form_id }: { form_id: string }) => {
             jsonFormData.fields[index].options = field.options;
         }
         setJsonFormData(jsonFormData);
-        setFormParams(JSON.stringify(jsonFormData));
-        setUpdateFieldTrigger(Date.now());
+        // setFormParams(JSON.stringify(jsonFormData));
+        setUpdateTrigger({
+            time: Date.now(), payload: JSON.stringify(jsonFormData),
+        });
     }
 
     const onFieldDeleted = (isIndexNumber: number) => {
         const formDeleted = jsonFormData.fields.filter((_, index) => index !== isIndexNumber);
         jsonFormData.fields = formDeleted;
         setJsonFormData(jsonFormData);
-        setFormParams(JSON.stringify(jsonFormData));
-        setUpdateFieldTrigger(Date.now());
+        // setFormParams(JSON.stringify(jsonFormData));
+        // setUpdateFieldTrigger(Date.now());
+        setUpdateTrigger({
+            time: Date.now(),
+            payload: JSON.stringify(jsonFormData),
+        });
     }
 
-    const updateFieldInDb = async () => {
-        const response = await updateFields(formParams, form_id, UserId);
-        if (response?.success) {
-            toast({
-                title: "Successfully Updated!",
-                description: response.success,
-                variant: "success",
-                duration: 2000,
-                action: (
-                    <ToastAction altText="Close">Close</ToastAction>
-                ),
-            })
-        }
-        if (response?.error) {
-            toast({
-                title: "Error!",
-                description: response?.error,
-                duration: 2000,
-                variant: "destructive",
-                action: (
-                    <ToastAction altText="Close">Close</ToastAction>
-                ),
-            })
-        }
-    };
+    // const updateFieldInDb = async () => {
+    //     const response = await updateFields(formParams, form_id, UserId);
+    //     if (response?.success) {
+    //         toast({
+    //             title: "Successfully Updated!",
+    //             description: response.success,
+    //             variant: "success",
+    //             duration: 2000,
+    //             action: (
+    //                 <ToastAction altText="Close">Close</ToastAction>
+    //             ),
+    //         })
+    //     }
+    //     if (response?.error) {
+    //         toast({
+    //             title: "Error!",
+    //             description: response?.error,
+    //             duration: 2000,
+    //             variant: "destructive",
+    //             action: (
+    //                 <ToastAction altText="Close">Close</ToastAction>
+    //             ),
+    //         })
+    //     }
+    // };
 
     const UpdateControllers = async (val: unknown, column: string) => {
         const req = await updateControllerFields(val, column, form_id, UserId);
@@ -137,10 +148,20 @@ const FormEdit = ({ form_id }: { form_id: string }) => {
 
 
     useEffect(() => {
-        if (updateFieldTrigger) {
-            updateFieldInDb();
-        }
-    }, [updateFieldTrigger, updateFieldInDb])
+        if (!updateTrigger) return;
+
+        updateFields(updateTrigger.payload, form_id, UserId)
+            .then((res) => {
+                if (res?.success) {
+                    toast({ title: "Added field and saved to DB!", variant: "success" });
+                } else {
+                    toast({ title: "Failed to save", description: res?.error, variant: "destructive" });
+                }
+            })
+            .catch((err) => {
+                toast({ title: "Error", description: String(err), variant: "destructive" });
+            });
+    }, [updateTrigger, form_id, UserId]);
 
     return (
         <div className='p-5'>
@@ -197,8 +218,8 @@ const FormEdit = ({ form_id }: { form_id: string }) => {
                     setBgGradient={(val) => { setBgGradient(val); UpdateControllers(z.string().parse(val), 'background') }}
                     setStyles={(val) => { setSelectedStyle(val); UpdateControllers(JSON.stringify(val), 'style') }}
                     setSignInEnable={(val) => {
-                         UpdateControllers(JSON.stringify(val), 'enabledSignIn') 
-                        }}
+                        UpdateControllers(JSON.stringify(val), 'enabledSignIn')
+                    }}
                 />
                 <div className='md:col-span-2 border rounded-lg shadow-md p-5 flex justify-center items-center'
                     style={{ backgroundImage: bgGradient }}

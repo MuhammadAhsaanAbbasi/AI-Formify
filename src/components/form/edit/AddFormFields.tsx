@@ -46,8 +46,8 @@ const AddFormFields = ({ addValues }: AddFormProps) => {
             fieldType: fieldType,
             placeholder: '',
             label: '',
-            required: true,
-            options: options
+            required: false,
+            options: undefined
         },
     });
 
@@ -77,9 +77,9 @@ const AddFormFields = ({ addValues }: AddFormProps) => {
         setError("");
         setSuccess("");
 
-        startTransition(() => {
+        startTransition(async () => {
+            console.log(`values : ${JSON.stringify(values)}`);
             addValues(values);
-
             form.reset();
             setOpenDialog(false);
         });
