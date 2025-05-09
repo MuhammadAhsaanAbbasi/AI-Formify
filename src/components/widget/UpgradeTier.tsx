@@ -126,7 +126,7 @@ export default function UpgradeTier() {
                 'mt-8 block rounded-md px-3.5 py-2.5 text-center text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 sm:mt-10 hover:cursor-pointer transition-all duration-500',
               )}
             >
-              Get started today
+              Become Supporter Today
             </div>
           </div>
         ))}

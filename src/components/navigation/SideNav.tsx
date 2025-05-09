@@ -1,38 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
-import { LibraryBig, MessageSquare, Shield } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-import { Button } from '../ui/button'
 import { Progress } from '../ui/progress'
 import { getFormsData } from '@/lib/actions/form.actions'
 import { useUser } from '@clerk/nextjs'
+import CreateForm from '../form/CreateForm'
+import { menuList } from '@/constants/constants'
 
-const menuList = [
-    {
-        id: 0,
-        name: 'My Forms',
-        icon: LibraryBig,
-        path: '/dashboard'
-    },
-    {
-        id: 1,
-        name: 'Responses',
-        icon: MessageSquare,
-        path: '/form/responses'
-    },
-    {
-        id: 2,
-        name: 'Upgrade',
-        icon: Shield,
-        path: '/dashboard/upgrade'
-    }
-]
+
 
 export const SideNav = () => {
-    const [formPercentage, setFormPercentange] = useState(0)
-    const [formlistLength, setFormlistLength] = useState<number>()
+    const [formPercentage, setFormPercentange] = useState(0);
+    const [formlistLength, setFormlistLength] = useState<number>();
+    const [disabled, setDisabled] = useState(false);
     const path = usePathname();
 
     const {user} = useUser();
@@ -45,10 +27,13 @@ export const SideNav = () => {
                 setFormlistLength(response?.success.length);
                 const percentage = (response.success.length / 3) * 100;
                 setFormPercentange(percentage);
+                if (formPercentage >= 100) {
+                    setDisabled(true);
+                }
             }
         };
         formData();
-    })
+    }, [formPercentage, UserId]);
 
     return (
         <div className='hidden md:block h-screen w-auto shadow-md border-2 bg-secondary rounded-md'>
@@ -66,7 +51,7 @@ export const SideNav = () => {
                 }
             </div>
             <div className='fixed bottom-7 p-6 w-56'>
-                <Button className='w-full'>+ Create Form</Button>
+                <CreateForm disable={disabled} />
                 <div className='my-8'>
                     <Progress value={formPercentage} />
                     <h2 className='text-sm my-2 text-gray-600'><span>{formlistLength} out of 3</span> Form Created</h2>

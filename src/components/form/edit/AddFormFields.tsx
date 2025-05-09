@@ -1,6 +1,6 @@
 "use client"
 import { Button } from '@/components/ui/button';
-import { Plus, PlusIcon, X } from 'lucide-react';
+import { LoaderCircle, Plus, PlusIcon, X } from 'lucide-react';
 import React, { useState, useTransition } from 'react'
 
 import {
@@ -275,7 +275,10 @@ const AddFormFields = ({ addValues }: AddFormProps) => {
                                         type="submit"
                                         disabled={isLoading}  // Disable during submission
                                     >
-                                        {isLoading ? "Generating..." : "Generate Form"}
+                                        {
+                                            isLoading ? <LoaderCircle className='animate-spin' />
+                                                : "Save"
+                                        }
                                     </Button>
                                 </div>
                             </DialogFooter>
