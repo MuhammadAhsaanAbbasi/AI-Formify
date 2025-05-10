@@ -15,16 +15,15 @@ export const generateform = async (values: z.infer<typeof formSchema>, userId: s
         return { error: "Invalid fields" }
     }
     const { title, description } = validatedFields.data
-    const InputPrompt = `title:${title}, description:${description}, Description: Next.js, React Workshop, On basis of title & description create JSON form with formTitle, formHeading along with fieldName, FieldTitle, FieldType, Placeholder, label, required fields, and checkbox and select field type options will be in array only and in JSON format`
+    const InputPrompt = `title:${title}, description:${description}, On basis of title & description create JSON form with formTitle, formHeading along with fieldName, FieldTitle, FieldType, Placeholder, label, required fields, and checkbox and select field type options will be in array only and in JSON format`
     try {
-        const result = await chatSession.sendMessage(InputPrompt);
-        const FormResponse = (result.response.text()).replace('```json', '').replace('```', '');
-        console.log(`FormResponse : ${FormResponse}`)
-        if (FormResponse) {
+        const result = await chatSession(InputPrompt)
+        console.log(`FormResponse : ${result}`)
+        if (result) {
             const user = await db.select().from(User).where(eq(User.clerkId, userId));
 
             const response = await db.insert(Forms).values({
-                jsonFormResp: FormResponse,
+                jsonFormResp: result,
                 user_id: user[0].id,
                 mockID: uuidv4(),
                 createdAt: moment().format('DD/MM/yyyy') // Corrected date format

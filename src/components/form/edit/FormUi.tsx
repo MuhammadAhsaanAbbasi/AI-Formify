@@ -284,7 +284,7 @@ const FormUi = ({ formData, form_id, onFieldsAdd, onFieldUpdate, selectedStyle, 
                 }
                 {isEditable && (
                     <AddFormFields
-                        addValues={(field) => onFieldsAdd(field)}
+                        addValues={onFieldsAdd}
                     />
                 )}
             </div>
@@ -292,4 +292,4 @@ const FormUi = ({ formData, form_id, onFieldsAdd, onFieldUpdate, selectedStyle, 
     )
 }
 
-export default FormUi
+export default FormUi;

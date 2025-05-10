@@ -26,7 +26,7 @@ import { FormError } from '../shared/FormError'
 import { FormSuccess } from '../shared/FormSuccess'
 // import { Forms } from '@/utils/schema'
 
-const CreateForm = () => {
+const CreateForm = ({disable}: {disable: boolean}) => {
     const [openDialog, setOpenDialog] = useState(false)
     const [error, setError] = useState<string | undefined>("")
     const [success, setSuccess] = useState<string | undefined>("")
@@ -168,7 +168,7 @@ const CreateForm = () => {
                                         </Button>
                                         <Button
                                             type="submit"
-                                            disabled={isLoading}  // Disable during submission
+                                            disabled={isLoading || disable}  // Disable during submission
                                         >
                                             {isLoading ? "Generating..." : "Generate Form"}
                                         </Button>

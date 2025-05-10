@@ -1,14 +1,16 @@
 import { ReactNode } from 'react';
 import { Metadata } from 'next';
-import {SideNav} from '@/components/navigation/SideNav';
+import { SideNav } from '@/components/navigation/SideNav';
+import MobileNav from '@/components/navigation/MobileNav';
+import { menuList } from '@/constants/constants';
 
 export const metadata: Metadata = {
     title: "AI-Formify",
     description: "AI Form Generator",
     icons: {
-      icon: "https://myapplication-logos.s3.ap-south-1.amazonaws.com/ai-formify.png",
+        icon: "https://myapplication-logos.s3.ap-south-1.amazonaws.com/ai-formify.png",
     },
-  };
+};
 
 const DashboardLayout = ({ children }: Readonly<{ children: ReactNode }>) => {
     return (
@@ -17,6 +19,7 @@ const DashboardLayout = ({ children }: Readonly<{ children: ReactNode }>) => {
                 <SideNav />
             </div>
             <div className='md:ml-56 bg-white'>
+                <MobileNav />
                 {children}
 
             </div>

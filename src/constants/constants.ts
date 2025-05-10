@@ -1,3 +1,25 @@
+import { LibraryBig, MessageSquare, Shield } from 'lucide-react';
+export const menuList = [
+    {
+        id: 0,
+        name: 'My Forms',
+        icon: LibraryBig,
+        path: '/dashboard'
+    },
+    {
+        id: 1,
+        name: 'Responses',
+        icon: MessageSquare,
+        path: '/form/responses'
+    },
+    {
+        id: 2,
+        name: 'Upgrade',
+        icon: Shield,
+        path: '/dashboard/upgrade'
+    }
+]
+
 export const fieldTypes = [
     {
         id: 0,

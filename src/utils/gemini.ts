@@ -1,11 +1,12 @@
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
+import {GoogleGenAI } from "@google/genai"
 
 const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY as string;
-const genAI = new GoogleGenerativeAI(apiKey);
-
-const model = genAI.getGenerativeModel({
-    model: "gemini-1.5-flash",
+const genAI = new GoogleGenAI({
+    apiKey:apiKey
 });
+
+const model = 'gemini-2.5-pro-preview-05-06';
 
 const generationConfig = {
     temperature: 1,
@@ -36,8 +37,15 @@ const safetySettings = [
 ];
 
 
-export const chatSession = model.startChat({
-    generationConfig,
-    safetySettings, //Adjust safety settings
-    // See https://ai.google.dev/gemini-api/docs/safety-settings
-});
+export async function chatSession(input: string) {
+  const response = await genAI.models.generateContent({
+    model: "gemini-2.0-flash",
+    contents: input,
+    config: {
+      ...generationConfig,
+      safetySettings,
+    },
+  });
+  
+  return response.text;
+}

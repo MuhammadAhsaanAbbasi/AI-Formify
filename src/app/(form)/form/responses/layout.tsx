@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import { Metadata } from 'next';
 import {SideNav} from '@/components/navigation/SideNav';
 import Header from '@/components/navigation/header/header';
+import MobileNav from '@/components/navigation/MobileNav';
 
 export const metadata: Metadata = {
     title: "AI-Formify",
@@ -19,6 +20,7 @@ const FormResponsesLayout = ({ children }: Readonly<{ children: ReactNode }>) =>
                 <SideNav />
             </div>
             <div className='md:ml-64 bg-white'>
+                <MobileNav />
                 {children}
 
             </div>

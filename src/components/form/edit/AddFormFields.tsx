@@ -1,6 +1,6 @@
 "use client"
 import { Button } from '@/components/ui/button';
-import { Plus, PlusIcon, X } from 'lucide-react';
+import { LoaderCircle, Plus, PlusIcon, X } from 'lucide-react';
 import React, { useState, useTransition } from 'react'
 
 import {
@@ -46,8 +46,8 @@ const AddFormFields = ({ addValues }: AddFormProps) => {
             fieldType: fieldType,
             placeholder: '',
             label: '',
-            required: true,
-            options: options
+            required: false,
+            options: undefined
         },
     });
 
@@ -77,9 +77,9 @@ const AddFormFields = ({ addValues }: AddFormProps) => {
         setError("");
         setSuccess("");
 
-        startTransition(() => {
+        startTransition(async () => {
+            console.log(`values : ${JSON.stringify(values)}`);
             addValues(values);
-
             form.reset();
             setOpenDialog(false);
         });
@@ -275,7 +275,10 @@ const AddFormFields = ({ addValues }: AddFormProps) => {
                                         type="submit"
                                         disabled={isLoading}  // Disable during submission
                                     >
-                                        {isLoading ? "Generating..." : "Generate Form"}
+                                        {
+                                            isLoading ? <LoaderCircle className='animate-spin' />
+                                                : "Save"
+                                        }
                                     </Button>
                                 </div>
                             </DialogFooter>
