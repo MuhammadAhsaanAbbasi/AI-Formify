@@ -86,7 +86,7 @@ const AddFormFields = ({ addValues }: AddFormProps) => {
     };
 
     return (
-        <div>
+        <div className='fixed bottom-5 right-3 z-50'>
             <Button
                 type="button"
                 onClick={() => setOpenDialog(true)}

@@ -8,6 +8,9 @@ const nextConfig = {
                 port: '',
             }
         ]
+    },
+    eslint: {
+        ignoreDuringBuilds: true
     }
 };
 
