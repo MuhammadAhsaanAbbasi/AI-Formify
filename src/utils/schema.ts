@@ -10,6 +10,7 @@ export const User = pgTable("user", {
     firstName: varchar("firstName").notNull(),
     lastName: varchar("lastName").notNull(),
     photo: varchar("photo").notNull(),
+    limit: serial("limit").$default(() => 3),
     createdAt: timestamp('createdAt', { mode: "date" }).defaultNow(),
 })
 

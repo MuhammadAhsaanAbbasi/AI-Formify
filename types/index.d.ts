@@ -5,6 +5,7 @@ declare interface CreateUserParams {
     clerkId: string;
     email: string;
     username: string;
+    limit: number;
     firstName: string;
     lastName: string;
     photo: string;
