@@ -64,17 +64,18 @@ export default function FormResponses() {
                 const parsed = resp.success.map((row) =>
                     JSON.parse(row.jsonResponse) as ResponseFormField[]
                 );
+                console.log(`parsed : ${parsed}`);
                 setSubmissions(parsed);
             }
             if (!resp.success) return <p>No submissions on this form yet!</p>;
         });
     }, [formId]);
 
-    // derive your column headers from the form blueprint
+    // derive your column headers from the form bluepri
     // const columns = submissions?.map((f) => f.m) ?? [];
     const exportToExcel = () =>{
         console.log(`submissions : ${submissions}`);
-        let jsonData: any = [];
+        let jsonData: any[] = [];
         submissions.forEach((submission) => {
             let data: any = {};
             submission.forEach((field) => {

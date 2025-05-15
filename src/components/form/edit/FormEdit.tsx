@@ -23,9 +23,8 @@ import { ToastAction } from '@/components/ui/toast'
 import * as z from "zod"
 import { fieldSchema } from '@/schemas/form'
 import Link from 'next/link'
-import { RWebShare } from "react-web-share";
 import ShareButton from '@/components/shared/ShareButton'
-import { CheckedState } from '@radix-ui/react-checkbox'
+import AddFormFields from './AddFormFields'
 
 const FormEdit = ({ form_id }: { form_id: string }) => {
 
@@ -35,10 +34,8 @@ const FormEdit = ({ form_id }: { form_id: string }) => {
         fields: []
     });
 
-    // const [formParams, setFormParams] = useState<string>('')
     const [selectedTheme, setSelectedTheme] = useState<string>('')
     const [bgGradient, setBgGradient] = useState<string>('');
-    // const [signInEnable, setSignInEnable] = useState<CheckedState>(false);
     const [selectedStyle, setSelectedStyle] = useState<BorderStyle>({
         id: 0,
         name: '',
@@ -60,7 +57,6 @@ const FormEdit = ({ form_id }: { form_id: string }) => {
             const response = await getFormById(form_id, UserId)
             if (response.success) {
                 setJsonFormData(JSON.parse(response.success.jsonFormResp));
-                // setFormParams(response.success.jsonFormResp);
                 setSelectedTheme((response.success.theme as string));
                 setSelectedStyle(JSON.parse((response.success.style as string)));
                 setBgGradient((response.success.background as string));
@@ -73,11 +69,10 @@ const FormEdit = ({ form_id }: { form_id: string }) => {
         jsonFormData.fields.push(newField);
         setJsonFormData(jsonFormData);
         console.log(`jsonFormData : ${JSON.stringify(jsonFormData)}`);
-        // setFormParams(JSON.stringify(jsonFormData));
-        // setUpdateTrigger({
-        //     time: Date.now(),
-        //     payload: JSON.stringify(jsonFormData),
-        // });
+        setUpdateTrigger({
+            time: Date.now(),
+            payload: JSON.stringify(jsonFormData),
+        });
     };
 
     const onFieldUpdate = (field: UpdateFields, index: number) => {
@@ -87,49 +82,20 @@ const FormEdit = ({ form_id }: { form_id: string }) => {
             jsonFormData.fields[index].options = field.options;
         }
         setJsonFormData(jsonFormData);
-        // setFormParams(JSON.stringify(jsonFormData));
         setUpdateTrigger({
             time: Date.now(), payload: JSON.stringify(jsonFormData),
         });
-    }
+    };
 
     const onFieldDeleted = (isIndexNumber: number) => {
         const formDeleted = jsonFormData.fields.filter((_, index) => index !== isIndexNumber);
         jsonFormData.fields = formDeleted;
         setJsonFormData(jsonFormData);
-        // setFormParams(JSON.stringify(jsonFormData));
-        // setUpdateFieldTrigger(Date.now());
         setUpdateTrigger({
             time: Date.now(),
             payload: JSON.stringify(jsonFormData),
         });
-    }
-
-    // const updateFieldInDb = async () => {
-    //     const response = await updateFields(formParams, form_id, UserId);
-    //     if (response?.success) {
-    //         toast({
-    //             title: "Successfully Updated!",
-    //             description: response.success,
-    //             variant: "success",
-    //             duration: 2000,
-    //             action: (
-    //                 <ToastAction altText="Close">Close</ToastAction>
-    //             ),
-    //         })
-    //     }
-    //     if (response?.error) {
-    //         toast({
-    //             title: "Error!",
-    //             description: response?.error,
-    //             duration: 2000,
-    //             variant: "destructive",
-    //             action: (
-    //                 <ToastAction altText="Close">Close</ToastAction>
-    //             ),
-    //         })
-    //     }
-    // };
+    };
 
     const UpdateControllers = async (val: unknown, column: string) => {
         const req = await updateControllerFields(val, column, form_id, UserId);
@@ -153,18 +119,35 @@ const FormEdit = ({ form_id }: { form_id: string }) => {
         updateFields(updateTrigger.payload, form_id, UserId)
             .then((res) => {
                 if (res?.success) {
-                    toast({ title: "Added field and saved to DB!", variant: "success" });
-                } else {
-                    toast({ title: "Failed to save", description: res?.error, variant: "destructive" });
+                    toast({
+                        title: "Successfully Updated!",
+                        description: res.success,
+                        variant: "success",
+                        duration: 2000,
+                        action: (
+                            <ToastAction altText="Close">Close</ToastAction>
+                        ),
+                    })
+                }
+                if (res?.error) {
+                    toast({
+                        title: "Error!",
+                        description: res?.error,
+                        duration: 2000,
+                        variant: "destructive",
+                        action: (
+                            <ToastAction altText="Close">Close</ToastAction>
+                        ),
+                    })
                 }
             })
             .catch((err) => {
                 toast({ title: "Error", description: String(err), variant: "destructive" });
             });
-    }, [updateTrigger, form_id, UserId]);
+    }, [updateTrigger]);
 
     return (
-        <div className='p-5'>
+        <div className='p-5 relative'>
             <div className='flex justify-between items-center px-2'>
                 <AlertDialog>
                     <AlertDialogTrigger asChild>
@@ -209,6 +192,10 @@ const FormEdit = ({ form_id }: { form_id: string }) => {
                     </ShareButton>
                 </div>
             </div>
+
+            <AddFormFields
+                addValues={onFieldsAdd}
+            />
             <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
                 <FormController
                     setSelectedTheme={(val) => {

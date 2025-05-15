@@ -282,11 +282,8 @@ const FormUi = ({ formData, form_id, onFieldsAdd, onFieldUpdate, selectedStyle, 
                         </SignInButton>
                     </Button>
                 }
-                {isEditable && (
-                    <AddFormFields
-                        addValues={onFieldsAdd}
-                    />
-                )}
+                {/* {isEditable && (
+                )} */}
             </div>
         </form>
     )
