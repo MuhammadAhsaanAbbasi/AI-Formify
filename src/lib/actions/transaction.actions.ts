@@ -13,7 +13,7 @@ import moment from 'moment';
 export async function checkoutCredits(transaction: CheckoutTransactionParams) {
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-    const amount = Number(transaction.amount) * 100;
+    const amount = transaction.amount * 100;
 
     const session = await stripe.checkout.sessions.create({
         line_items: [
