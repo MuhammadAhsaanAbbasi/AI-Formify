@@ -156,7 +156,7 @@ const FormUi = ({ formData, form_id, onFieldsAdd, onFieldUpdate, selectedStyle, 
         >
             <h1 className='text-2xl font-bold text-center'>{formData.formTitle}</h1>
             <h2 className='text-lg text-gray-700 text-center'>{formData.formHeading}</h2>
-            {formData.fields.map((field: FormField, index) => (
+            {formData.fields?.map((field: FormField, index) => (
                 <div key={field.label} className='flex items-center gap-3'>
                     {
                         field.fieldType == "select" ?

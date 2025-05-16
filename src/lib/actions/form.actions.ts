@@ -15,7 +15,7 @@ export const generateform = async (values: z.infer<typeof formSchema>, userId: s
         return { error: "Invalid fields" }
     }
     const { title, description } = validatedFields.data
-    const InputPrompt = `title:${title}, description:${description}, On basis of title & description create JSON form with formTitle, formHeading along with fieldName, FieldTitle, FieldType, Placeholder, label, required fields, and checkbox and select field type options will be in array only and in JSON format`
+    const InputPrompt = `title:${title}, description:${description}, On basis of title & description create JSON Object form data with formTitle, formHeading along with fieldName, FieldTitle, FieldType, Placeholder, label, required fields, and checkbox and select field type options will be in array only and in JSON format`
     try {
         const result = await chatSession(InputPrompt)
         console.log(`FormResponse : ${result}`)

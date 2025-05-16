@@ -1,6 +1,11 @@
 "use client";
+import { checkoutCredits } from '@/lib/actions/transaction.actions';
+import { useUser } from '@clerk/nextjs';
 import { CheckIcon } from '@heroicons/react/20/solid'
 import { useRouter } from 'next/navigation'
+import { loadStripe } from "@stripe/stripe-js";
+import { useEffect } from "react";
+import { toast } from '@/hooks/use-toast';
 
 
 const tiers = [
@@ -9,20 +14,21 @@ const tiers = [
     id: 'tier-monthly',
     href: '#',
     duration: "month",
-    priceMonthly: '$5.99',
+    price: '$5.99',
     description: "The perfect plan if you're just getting started with our product.",
-    features: ['10 forms', 
-      'Advanced analytics', 
+    features: ['10 forms',
+      'Advanced analytics',
       '24-hour support response time',
       'Early Access on few new features',
     ],
     featured: false,
+    limit: 10,
   },
   {
     name: 'Yearly',
     id: 'tier-yearly',
     href: '#',
-    priceMonthly: '$45',
+    price: '$45',
     duration: "year",
     description: 'Dedicated support and infrastructure for your company.',
     features: [
@@ -33,6 +39,7 @@ const tiers = [
       'Early Access to all new features',
     ],
     featured: true,
+    limit: 100,
   },
 ]
 
@@ -42,6 +49,33 @@ function classNames(...classes: any[]) {
 
 export default function UpgradeTier() {
   const router = useRouter();
+  const { user } = useUser();
+  const userId = user?.id as string;
+  useEffect(() => {
+    loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+  }, []);
+
+  useEffect(() => {
+    // Check to see if this is a redirect back from Checkout
+    const query = new URLSearchParams(window.location.search);
+    if (query.get("success")) {
+      toast({
+        title: "Order placed!",
+        description: "You will receive an email confirmation",
+        duration: 5000,
+        className: "success-toast",
+      });
+    }
+
+    if (query.get("canceled")) {
+      toast({
+        title: "Order canceled!",
+        description: "Continue to shop around and checkout when you're ready",
+        duration: 5000,
+        className: "error-toast",
+      });
+    }
+  }, [toast]);
   return (
     <div className="relative isolate bg-white px-6 py-10 lg:px-8">
       <div aria-hidden="true" className="absolute inset-x-0 -top-3 -z-10 transform-gpu overflow-hidden px-36 blur-3xl">
@@ -90,11 +124,11 @@ export default function UpgradeTier() {
                   'text-5xl font-semibold tracking-tight',
                 )}
               >
-                {tier.priceMonthly}
+                {tier.price}
               </span>
               <span className={classNames(tier.featured ? 'text-muted' : 'text-muted-foreground', 'text-base')}>
                 /{tier.duration}
-                </span>
+              </span>
             </p>
             <p className={classNames(tier.featured ? 'text-muted' : 'text-muted-foreground', 'mt-6 text-base/7')}>
               {tier.description}
@@ -117,7 +151,12 @@ export default function UpgradeTier() {
               ))}
             </ul>
             <div
-            onClick={() => router.push(tier.href)}
+              onClick={() => checkoutCredits({
+                plan: tier.name,
+                limit: tier.limit,
+                amount: Number(tier.price.replace('$', '')),
+                buyerId: userId
+              })}
               aria-describedby={tier.id}
               className={classNames(
                 tier.featured
