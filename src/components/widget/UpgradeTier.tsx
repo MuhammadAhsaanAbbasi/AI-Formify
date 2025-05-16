@@ -14,7 +14,7 @@ const tiers = [
     id: 'tier-monthly',
     href: '#',
     duration: "month",
-    price: '$5.99',
+    price: '$6',
     description: "The perfect plan if you're just getting started with our product.",
     features: ['10 forms',
       'Advanced analytics',
