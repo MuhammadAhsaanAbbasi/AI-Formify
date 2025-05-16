@@ -1,5 +1,7 @@
 /* eslint-disable camelcase */
 import { createTransaction } from "@/lib/actions/transaction.actions";
+import { getUserById } from "@/lib/actions/user.actions";
+import moment from "moment";
 import { NextResponse } from "next/server";
 import stripe from "stripe";
 
@@ -23,14 +25,17 @@ export async function POST(request: Request) {
     // CREATE
     if (eventType === "checkout.session.completed") {
         const { id, amount_total, metadata } = event.data.object;
+        const buyerId = metadata?.buyerId as string;
+
+        const user = await getUserById(buyerId);
 
         const transaction = {
             stripeId: id,
             amount: amount_total ? amount_total / 100 : 0,
             plan: metadata?.plan || "",
-            credits: Number(metadata?.credits) || 0,
-            buyerId: metadata?.buyerId || "",
-            createdAt: new Date(),
+            limit: Number(metadata?.limit) || 0,
+            buyerId: user.id,
+            createdAt: moment().format('DD/MM/yyyy'),
         };
 
         const newTransaction = await createTransaction(transaction);

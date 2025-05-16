@@ -12,7 +12,7 @@ export const User = pgTable("user", {
     photo: varchar("photo").notNull(),
     limit: serial("limit").$default(() => 3),
     createdAt: timestamp('createdAt', { mode: "date" }).defaultNow(),
-})
+});
 
 export const usersRelations = relations(User, ({ many }) => ({
     forms: many(Forms),
@@ -50,5 +50,22 @@ export const UserResponseRelations = relations(userResponses, ({ one }) => ({
     form: one(Forms, {
         fields: [userResponses.form_id],
         references: [Forms.id],
+    }),
+}))
+
+export const Transactions = pgTable('transactions', {
+    id:serial('id').primaryKey(),
+    stripeId:varchar('stripeId').notNull(),
+    amount:integer('amount').notNull(),
+    limit:integer('limit').notNull(),
+    plan:varchar('plan').notNull(),
+    buyerId:integer('buyerId').notNull(),
+    createdAt:varchar('createdAt').notNull(),
+})  
+
+export const TransactionRelations = relations(Transactions, ({ one }) => ({
+    user: one(User, {
+        fields: [Transactions.buyerId],
+        references: [User.id],
     }),
 }))

@@ -78,3 +78,19 @@ export async function deleteUser(clerkId: string) {
         handleError(error);
     }
 }
+
+export const updateCredits = async (user_id: number, limits: number) => {
+    try {
+
+        const updatedUser = await db.update(User)
+        .set({ limit: limits })
+        .where(eq(User.id, user_id))
+        .returning();
+
+        if (!updatedUser) throw new Error("User update failed");
+
+        return JSON.parse(JSON.stringify(updatedUser));
+    } catch (error) {
+        handleError(error);
+    }
+}

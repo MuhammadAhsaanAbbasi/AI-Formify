@@ -84,3 +84,19 @@ declare interface ResponseFormField {
 
 
 // interface FormResponse {}
+
+declare type CheckoutTransactionParams = {
+    plan: string;
+    limit: number;
+    amount: number;
+    buyerId: string;
+};
+
+declare type CreateTransactionParams = {
+    stripeId: string;
+    amount: number;
+    limit: number;
+    plan: string;
+    buyerId: number;
+    createdAt: string;
+};
