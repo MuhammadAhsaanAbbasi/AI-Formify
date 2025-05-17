@@ -26,9 +26,11 @@ export const Dashboard = () => {
         formData();
     }, [formlistLength, UserId]);
     return (
-        <div className='py-10 px-10 md:px-16 flex flex-col gap-10'>
+        <div className='py-10 px-5 sm:px-10 md:px-16 flex flex-col gap-10'>
             <div className='flex justify-between items-center'>
-                <h3 className='text-4xl font-bold'>Dashboard</h3>
+                <h1 className='text-3xl md:text-4xl lg:text-5xl font-medium font-fontSans'>
+                    Dashboard
+                </h1>
                 <CreateForm disable={disabled} />
             </div>
             <FormLists />

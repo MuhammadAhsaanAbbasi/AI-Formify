@@ -93,10 +93,10 @@ export default function FormResponses() {
 
 
     return (
-        <section className="space-y-6 my-5 md:my-8">
+        <section className="space-y-6">
             {/* —————— form selector & Export Responses —————— */}
-            <div className="flex items-center justify-between">
-                <div className="flex flex-col md:flex-row items-center gap-2">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-2">
                     <h6 className="text-base lg:text-lg text-gray-500 font-medium">
                         Select a form
                     </h6>

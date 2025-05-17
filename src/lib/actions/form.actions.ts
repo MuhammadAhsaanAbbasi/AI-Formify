@@ -47,7 +47,8 @@ export const getFormsData = async (userId: string) => {
         const response: FormParams[] = await db.select().from(Forms)
             .where(eq(Forms.user_id, users[0].id))
             .orderBy(desc(Forms.id));
-        return { success: response }
+        console.log(`limit : ${users[0].limit}`); 
+        return { success: response, limit: users[0].limit }
     } catch (error) {
         if (error instanceof Error) {
             return { error: "Invalid credentials!", message: error.message };
