@@ -151,12 +151,12 @@ export default function UpgradeTier() {
               ))}
             </ul>
             <div
-              onClick={() => checkoutCredits({
-                plan: tier.name,
-                limit: tier.limit,
-                amount: Number(tier.price.replace('$', '')),
-                buyerId: userId
-              })}
+              // onClick={() => checkoutCredits({
+              //   plan: tier.name,
+              //   limit: tier.limit,
+              //   amount: Number(tier.price.replace('$', '')),
+              //   buyerId: userId
+              // })}
               aria-describedby={tier.id}
               className={classNames(
                 tier.featured
