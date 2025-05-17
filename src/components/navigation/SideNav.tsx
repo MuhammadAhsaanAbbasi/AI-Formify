@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -14,10 +13,11 @@ import { menuList } from '@/constants/constants'
 export const SideNav = () => {
     const [formPercentage, setFormPercentange] = useState(0);
     const [formlistLength, setFormlistLength] = useState<number>();
+    const [limit, setLimit] = useState<number>(3);
     const [disabled, setDisabled] = useState(false);
     const path = usePathname();
 
-    const {user} = useUser();
+    const { user } = useUser();
     const UserId = user?.id as string;
 
     useEffect(() => {
@@ -25,7 +25,9 @@ export const SideNav = () => {
             const response = await getFormsData(UserId);
             if (response.success) {
                 setFormlistLength(response?.success.length);
-                const percentage = (response.success.length / 3) * 100;
+                // console.log(`limit : ${response?.limit}`);
+                setLimit(response?.limit);
+                const percentage = (response.success.length / limit) * 100;
                 setFormPercentange(percentage);
                 if (formPercentage >= 100) {
                     setDisabled(true);
@@ -54,9 +56,21 @@ export const SideNav = () => {
                 <CreateForm disable={disabled} />
                 <div className='my-8'>
                     <Progress value={formPercentage} />
-                    <h2 className='text-sm my-2 text-gray-600'><span>{formlistLength} out of 3</span> Form Created</h2>
+                    <h2 className='text-sm my-2 text-gray-600'>
+                        <span>
+                            {formlistLength} out of
+                            <span> {limit}</span>
+                        </span> Form Created</h2>
                     {/* Conditionally Rendered */}
-                    <h2 className='text-sm my-2 text-gray-600'>Upgrade your plan for unlimited AI form build</h2>
+                    <h2 className='text-sm my-2 text-gray-600'>
+                        {
+                            limit < 5 && (
+                                <span>
+                                    Upgrade your plan for unlimited AI form build
+                                </span>
+                            )
+                        }
+                    </h2>
                 </div>
             </div>
         </div>

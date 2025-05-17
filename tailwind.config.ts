@@ -119,6 +119,9 @@ const config: Config = {
 			},
 		},
 	},
+	fontFamily: {
+		fontSans: "var(--font-sans)",
+	},
 	plugins: [
 		require("tailwindcss-animate"),
 		require('daisyui'),
