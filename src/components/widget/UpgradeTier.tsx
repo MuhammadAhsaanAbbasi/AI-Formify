@@ -1,17 +1,19 @@
 "use client";
-import { checkoutCredits } from '@/lib/actions/transaction.actions';
 import { useUser } from '@clerk/nextjs';
-import { CheckIcon } from '@heroicons/react/20/solid'
 import { useRouter } from 'next/navigation'
 import { loadStripe } from "@stripe/stripe-js";
 import { useEffect } from "react";
 import { toast } from '@/hooks/use-toast';
+import { checkoutCredits } from '@/lib/actions/transaction.actions';
+import { CheckIcon } from '@heroicons/react/20/solid'
+import Link from 'next/link';
 
 
 const tiers = [
   {
+    id: 45445,
     name: 'Monthly',
-    id: 'tier-monthly',
+    slag: 'tier-monthly',
     href: '#',
     duration: "month",
     price: '$6',
@@ -25,8 +27,9 @@ const tiers = [
     limit: 10,
   },
   {
+    id: 45446,
     name: 'Yearly',
-    id: 'tier-yearly',
+    slag: 'tier-yearly',
     href: '#',
     price: '$45',
     duration: "year",
@@ -48,34 +51,34 @@ function classNames(...classes: any[]) {
 }
 
 export default function UpgradeTier() {
-  const router = useRouter();
-  const { user } = useUser();
-  const userId = user?.id as string;
-  useEffect(() => {
-    loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
-  }, []);
+  // const router = useRouter();
+  // // const { user } = useUser();
+  // // const userId = user?.id as string;
+  // // useEffect(() => {
+  // //   loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+  // // }, []);
 
-  useEffect(() => {
-    // Check to see if this is a redirect back from Checkout
-    const query = new URLSearchParams(window.location.search);
-    if (query.get("success")) {
-      toast({
-        title: "Order placed!",
-        description: "You will receive an email confirmation",
-        duration: 5000,
-        className: "success-toast",
-      });
-    }
+  // // useEffect(() => {
+  // //   // Check to see if this is a redirect back from Checkout
+  // //   const query = new URLSearchParams(window.location.search);
+  // //   if (query.get("success")) {
+  // //     toast({
+  // //       title: "Order placed!",
+  // //       description: "You will receive an email confirmation",
+  // //       duration: 5000,
+  // //       className: "success-toast",
+  // //     });
+  // //   }
 
-    if (query.get("canceled")) {
-      toast({
-        title: "Order canceled!",
-        description: "Continue to shop around and checkout when you're ready",
-        duration: 5000,
-        className: "error-toast",
-      });
-    }
-  }, [toast]);
+  // //   if (query.get("canceled")) {
+  // //     toast({
+  // //       title: "Order canceled!",
+  // //       description: "Continue to shop around and checkout when you're ready",
+  // //       duration: 5000,
+  // //       className: "error-toast",
+  // //     });
+  // //   }
+  // // }, [toast]);
   return (
     <div className="relative isolate bg-white px-6 py-10 lg:px-8">
       <div aria-hidden="true" className="absolute inset-x-0 -top-3 -z-10 transform-gpu overflow-hidden px-36 blur-3xl">
@@ -112,7 +115,6 @@ export default function UpgradeTier() {
             )}
           >
             <h3
-              id={tier.id}
               className={classNames(tier.featured ? 'text-muted' : 'text-muted-foreground', 'text-base/7 font-semibold')}
             >
               {tier.name}
@@ -150,14 +152,15 @@ export default function UpgradeTier() {
                 </li>
               ))}
             </ul>
-            <div
+            <Link
               // onClick={() => checkoutCredits({
               //   plan: tier.name,
               //   limit: tier.limit,
               //   amount: Number(tier.price.replace('$', '')),
               //   buyerId: userId
               // })}
-              aria-describedby={tier.id}
+              // aria-describedby={tier.id}
+              href={`/checkout/?id=${tier.id}&plan=${tier.slag}`}
               className={classNames(
                 tier.featured
                   ? 'bg-secondary text-primary shadow-xs hover:bg-secondary/80 focus-visible:outline-secondary/60'
@@ -166,7 +169,7 @@ export default function UpgradeTier() {
               )}
             >
               Become Supporter Today
-            </div>
+            </Link>
           </div>
         ))}
       </div>
