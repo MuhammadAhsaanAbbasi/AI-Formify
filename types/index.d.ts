@@ -1,6 +1,8 @@
 /* eslint-disable no-unused-vars */
 
 // ====== USER PARAMS
+declare type fieldType = 'text' | 'textarea' | 'email' | 'number' | 'tel' | 'file' | 'select' | 'checkbox' | 'radio';
+
 declare interface CreateUserParams {
     clerkId: string;
     email: string;
@@ -43,7 +45,7 @@ declare interface JsonFormParams {
 declare interface FormField {
     fieldName: string;
     fieldTitle: string;
-    fieldType: 'text' | 'email' | 'number' | 'tel' | 'select' | 'checkbox' | 'radio' ;
+    fieldType: fieldType;
     placeholder: string;
     label: string;
     required: boolean;
@@ -66,7 +68,6 @@ declare interface UpdateUserParams {
 };
 
 
-declare type fieldType = 'text' | 'email' | 'number' | 'tel' | 'select' | 'checkbox' | 'radio' ;
 
 interface BorderStyle {
         id:number,
@@ -79,7 +80,7 @@ interface BorderStyle {
 declare interface ResponseFormField {
     fieldName: string;
     fieldValue: unknown;
-    fieldType: 'text' | 'email' | 'number' | 'tel' | 'select' | 'checkbox' | 'radio' ;
+    fieldType: fieldType;
 }
 
 

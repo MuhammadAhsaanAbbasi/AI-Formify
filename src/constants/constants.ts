@@ -28,31 +28,41 @@ export const fieldTypes = [
     },
     {
         id: 1,
+        value: 'textarea',
+        item: 'Long Text'
+    },
+    {
+        id: 2,
         value: 'email',
         item: 'Email'
     },
     {
-        id: 2,
+        id: 3,
         value: 'number',
         item: 'Number'
     },
     {
-        id: 3,
+        id: 4,
         value: 'tel',
         item: 'Phone Number'
     },
     {
-        id: 4,
+        id: 5,
+        value: 'file',
+        item: 'File'
+    },
+    {
+        id: 6,
         value: 'select',
         item: 'Option Selection'
     },
     {
-        id: 5,
+        id: 7,
         value: 'checkbox',
         item: 'Checkbox'
     },
     {
-        id: 6,
+        id: 8,
         value: 'radio',
         item: 'Radio Group'
     },
