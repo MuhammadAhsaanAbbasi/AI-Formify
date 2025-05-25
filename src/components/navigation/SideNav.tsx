@@ -23,6 +23,7 @@ export const SideNav = () => {
     useEffect(() => {
         const formData = async () => {
             const response = await getFormsData(UserId);
+            console.log(`SideNav Response : ${(response.error)}`);
             if (response.success) {
                 setFormlistLength(response?.success.length);
                 // console.log(`limit : ${response?.limit}`);

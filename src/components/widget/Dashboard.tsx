@@ -15,6 +15,7 @@ export const Dashboard = () => {
     useEffect(() => {
         const formData = async () => {
             const response = await getFormsData(UserId);
+            console.log(`Dashboard Response : ${(response.error)}`);
             if (response.success) {
                 setFormlistLength(response?.success.length);
                 const percentage = (response.success.length / 3) * 100;

@@ -1,3 +1,4 @@
+"use client";
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
@@ -5,17 +6,16 @@ import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { SignInButton, useUser } from '@clerk/nextjs'
-import React, { ChangeEvent, FormEvent, LegacyRef, useRef, useState, useTransition } from 'react'
+import React, { ChangeEvent, FormEvent, useRef, useState, useTransition } from 'react'
 import EditForm from './EditForm'
-import AddFormFields from './AddFormFields'
-import * as z from "zod"
-import { fieldSchema } from '@/schemas/form'
 import { CheckedState } from '@radix-ui/react-checkbox'
 import { formResponseSubmit } from '@/lib/actions/form.actions'
 import { ToastAction } from '@/components/ui/toast'
 import { toast } from '@/hooks/use-toast'
-import { LoaderCircle } from 'lucide-react'
+import { Grip, LoaderCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { ReorderableList } from '@/components/shared/Render'
+import { useDragControls } from 'framer-motion';
 
 interface FormProps {
     form_id: string;
@@ -24,13 +24,13 @@ interface FormProps {
     enabledSignIn?: boolean;
     isEditable?: boolean;
     selectedTheme?: string;
-    onFieldsAdd: (fields: z.infer<typeof fieldSchema>) => void;
     onFieldUpdate: (field: UpdateFields, index: number) => void;
     onDeletedField: (index: number) => void;
+    onReorder: (newItems: FormField[]) => void
 };
 
 
-const FormUi = ({ formData, form_id, onFieldsAdd, onFieldUpdate, selectedStyle, selectedTheme,
+const FormUi = ({ formData, form_id, onReorder, onFieldUpdate, selectedStyle, selectedTheme,
     onDeletedField, enabledSignIn = false, isEditable = true }: FormProps) => {
     const { isSignedIn } = useUser();
     const boxShadow = selectedStyle?.key == 'boxshadow' ? selectedStyle.value : '';
@@ -156,118 +156,135 @@ const FormUi = ({ formData, form_id, onFieldsAdd, onFieldUpdate, selectedStyle, 
         >
             <h1 className='text-2xl font-bold text-center'>{formData.formTitle}</h1>
             <h2 className='text-lg text-gray-700 text-center'>{formData.formHeading}</h2>
-            {formData.fields?.map((field: FormField, index) => (
-                <div key={field.label} className='flex items-center gap-3'>
-                    {
-                        field.fieldType == "select" ?
-                            <div className='w-full my-3'>
-                                <Label className='text-gray-500'>{field.label}</Label>
-                                <Select required={field.required} name={field.fieldName}
-                                    onValueChange={(e) => handleSelectChange(field.label, e)}
-                                    disabled={isPending}
-                                >
-                                    <SelectTrigger className="w-full bg-transparent">
-                                        <SelectValue placeholder={field.placeholder} />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {field.options?.map((option, index) => (
-                                            <SelectItem key={index} value={option}>
-                                                {option}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            :
-                            field.fieldType == "radio" ?
+            <ReorderableList
+                isEditable={isEditable}
+                items={formData.fields}
+                onReorder={onReorder}
+                className="space-y-3"
+            >
+                {(field, index) => (
+
+                    <div key={field.label} className='flex items-center gap-3'>
+                        {
+                            isEditable && (
+                                <Grip size={25} 
+                                className='hover:cursor-pointer opacity-40 hover:opacity-85'
+                                />
+                            )
+                        }
+                        {
+                            field.fieldType == "select" ?
                                 <div className='w-full my-3'>
                                     <Label className='text-gray-500'>{field.label}</Label>
-                                    <RadioGroup required={field.required} defaultValue={field.fieldTitle}
+                                    <Select required={field.required} name={field.fieldName}
+                                        onValueChange={(e) => handleSelectChange(field.label, e)}
                                         disabled={isPending}
                                     >
-                                        {field.options?.map((option, index) => (
-                                            <div key={index} className="flex items-center space-x-2">
-                                                <RadioGroupItem
-                                                    value={option}
-                                                    id={index.toString()}
-                                                    onClick={() => handleSelectChange(field.label, option)}
-                                                >
+                                        <SelectTrigger className="w-full bg-transparent">
+                                            <SelectValue placeholder={field.placeholder} />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {field.options?.map((option, index) => (
+                                                <SelectItem key={index} value={option}>
                                                     {option}
-                                                </RadioGroupItem>
-                                                <Label htmlFor={index.toString()}>{option}</Label>
-                                            </div>
-                                        ))}
-                                    </RadioGroup>
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
                                 </div>
                                 :
-                                field.fieldType == "checkbox" ?
-                                    <div className='w-full my-3 space-y-2'>
+                                field.fieldType == "radio" ?
+                                    <div className='w-full my-3'>
                                         <Label className='text-gray-500'>{field.label}</Label>
-                                        {field.options ? field.options.map((option, index) => (
-                                            <div key={index} className="flex items-center gap-2 my-2">
-                                                <Checkbox id={option} disabled={isPending}
-                                                    onCheckedChange={(e) => handleCheckBoxChange(field.label, e, option)}
-                                                />
-                                                <label
-                                                    htmlFor={option}
-                                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                                >
-                                                    {option}
-                                                </label>
-                                            </div>
-                                        ))
-                                            :
-                                            <div className="flex items-center gap-2 my-2">
-                                                <Checkbox id={field.fieldName}
-                                                    onCheckedChange={(e) => handleCheckBoxChange(field.label, e, field.fieldName)}
-                                                    disabled={isPending} />
-                                                <label
-                                                    htmlFor={field.fieldName}
-                                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                                >
-                                                    {field.label}
-                                                </label>
-                                            </div>
-                                        }
+                                        <RadioGroup required={field.required} defaultValue={field.fieldTitle}
+                                            disabled={isPending}
+                                        >
+                                            {field.options?.map((option, index) => (
+                                                <div key={index} className="flex items-center space-x-2">
+                                                    <RadioGroupItem
+                                                        value={option}
+                                                        id={index.toString()}
+                                                        onClick={() => handleSelectChange(field.label, option)}
+                                                    >
+                                                        {option}
+                                                    </RadioGroupItem>
+                                                    <Label htmlFor={index.toString()}>{option}</Label>
+                                                </div>
+                                            ))}
+                                        </RadioGroup>
                                     </div>
                                     :
-                                    <div className='w-full my-3 space-y-2'>
-                                        <Label className='text-gray-500 flex items-center gap-2'>
-                                            {field.label}
-                                            {!field.required && (
-                                                <span>(Optional)</span>
-                                            )}
-                                        </Label>
-                                        <Input
-                                            name={field.label}
-                                            type={field.fieldType}
-                                            placeholder={field.placeholder}
-                                            required={field.required}
-                                            className="bg-transparent"
-                                            onBlur={handleInputChange}  // now only fires once, when focus leaves
-                                            disabled={isPending}
-                                        />
+                                    field.fieldType == "checkbox" ?
+                                        <div className='w-full my-3 space-y-2'>
+                                            <Label className='text-gray-500'>{field.label}</Label>
+                                            {field.options ? field.options.map((option, index) => (
+                                                <div key={index} className="flex items-center gap-2 my-2">
+                                                    <Checkbox id={option} disabled={isPending}
+                                                        onCheckedChange={(e) => handleCheckBoxChange(field.label, e, option)}
+                                                    />
+                                                    <label
+                                                        htmlFor={option}
+                                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                                    >
+                                                        {option}
+                                                    </label>
+                                                </div>
+                                            ))
+                                                :
+                                                <div className="flex items-center gap-2 my-2">
+                                                    <Checkbox id={field.fieldName}
+                                                        onCheckedChange={(e) => handleCheckBoxChange(field.label, e, field.fieldName)}
+                                                        disabled={isPending} />
+                                                    <label
+                                                        htmlFor={field.fieldName}
+                                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                                    >
+                                                        {field.label}
+                                                    </label>
+                                                </div>
+                                            }
+                                        </div>
+                                        :
+                                        <div className='w-full my-3 space-y-2'>
+                                            <Label className='text-gray-500 flex items-center gap-2'>
+                                                {field.label}
+                                                {!field.required && (
+                                                    <span>(Optional)</span>
+                                                )}
+                                            </Label>
+                                            <Input
+                                                name={field.label}
+                                                type={field.fieldType}
+                                                placeholder={field.placeholder}
+                                                required={field.required}
+                                                className="bg-transparent"
+                                                onBlur={handleInputChange}  // now only fires once, when focus leaves
+                                                disabled={isPending}
+                                            />
 
-                                    </div>
-                    }
-                    {isEditable && (
-                        <div>
-                            <EditForm
-                                defaultValue={field}
-                                updateField={(field) => onFieldUpdate(field, index)}
-                                deletedField={() => onDeletedField(index)}
-                            />
-                        </div>
-                    )}
-                </div>
-            ))}
+                                        </div>
+                        }
+                        {isEditable && (
+                            <div>
+                                <EditForm
+                                    defaultValue={field}
+                                    updateField={(field) => onFieldUpdate(field, index)}
+                                    deletedField={() => onDeletedField(index)}
+                                />
+                            </div>
+                        )}
+                    </div>
+                )}
+            </ReorderableList>
+            {/* {formData.fields?.map((field: FormField, index) => (
+            ))} */}
             <div className='flex justify-between items-center gap-3'>
                 {isEditable ? (
                     <button type="button" className='btn btn-primary'>Submit</button>
                 ) : (
 
                     <button type="submit" className='btn btn-primary'
-                    disabled={!isSignedIn || isPending}
+                        disabled={!isSignedIn || isPending}
                     >
                         {
                             isPending ? <LoaderCircle className="animate-spin" /> : "Submit"
@@ -282,8 +299,6 @@ const FormUi = ({ formData, form_id, onFieldsAdd, onFieldUpdate, selectedStyle, 
                         </SignInButton>
                     </Button>
                 }
-                {/* {isEditable && (
-                )} */}
             </div>
         </form>
     )
