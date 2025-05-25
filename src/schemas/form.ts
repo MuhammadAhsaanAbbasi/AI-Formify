@@ -11,7 +11,7 @@ export const fieldSchema = z.object({
     fieldTitle: z.string(),
     label: z.string(),
     placeholder: z.string(),
-    fieldType: z.enum(['text', 'email', 'number', 'tel', 'select', 'checkbox', 'radio']),
+    fieldType: z.enum(['text' , 'textarea' , 'email' , 'number' , 'tel' , 'file' , 'select' , 'checkbox' , 'radio']),
     required: z.boolean().default(false),
     options: z.array(z.string()).optional(), // Only for 'select', 'radio'
 });

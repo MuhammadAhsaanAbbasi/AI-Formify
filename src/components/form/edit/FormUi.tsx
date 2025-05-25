@@ -16,6 +16,7 @@ import { Grip, LoaderCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { ReorderableList } from '@/components/shared/Render'
 import { useDragControls } from 'framer-motion';
+import { Textarea } from '@/components/ui/textarea';
 
 interface FormProps {
     form_id: string;
@@ -43,7 +44,7 @@ const FormUi = ({ formData, form_id, onReorder, onFieldUpdate, selectedStyle, se
 
     const router = useRouter();
 
-    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value, type } = e.target;
         const fieldType = type as ResponseFormField['fieldType'];
         setJsonFormData((prev) => {
@@ -167,8 +168,8 @@ const FormUi = ({ formData, form_id, onReorder, onFieldUpdate, selectedStyle, se
                     <div key={field.label} className='flex items-center gap-3'>
                         {
                             isEditable && (
-                                <Grip size={25} 
-                                className='hover:cursor-pointer opacity-40 hover:opacity-85'
+                                <Grip size={25}
+                                    className='hover:cursor-pointer opacity-40 hover:opacity-85'
                                 />
                             )
                         }
@@ -244,34 +245,68 @@ const FormUi = ({ formData, form_id, onReorder, onFieldUpdate, selectedStyle, se
                                                 </div>
                                             }
                                         </div>
-                                        :
-                                        <div className='w-full my-3 space-y-2'>
-                                            <Label className='text-gray-500 flex items-center gap-2'>
-                                                {field.label}
-                                                {!field.required && (
-                                                    <span>(Optional)</span>
-                                                )}
-                                            </Label>
-                                            <Input
-                                                name={field.label}
-                                                type={field.fieldType}
-                                                placeholder={field.placeholder}
-                                                required={field.required}
-                                                className="bg-transparent"
-                                                onBlur={handleInputChange}  // now only fires once, when focus leaves
-                                                disabled={isPending}
-                                            />
+                                        : field.fieldType == "textarea" ?
+                                            <div className='w-full my-3 space-y-2'>
+                                                <Label className='text-gray-500 flex items-center gap-2'>
+                                                    {field.label}
+                                                    {!field.required && (
+                                                        <span>(Optional)</span>
+                                                    )}
+                                                </Label>
+                                                <Textarea
+                                                    name={field.label}
+                                                    placeholder={field.placeholder}
+                                                    required={field.required}
+                                                    className="bg-transparent"
+                                                    onBlur={handleInputChange}
+                                                    disabled={isPending}
+                                                />
+                                            </div>
+                                            :
+                                            field.fieldType == "file" ?
+                                                <div className='w-full my-3 space-y-2'>
+                                                    <Label className='text-gray-500 flex items-center gap-2'>
+                                                        {field.label}
+                                                        {!field.required && (
+                                                            <span>(Optional)</span>
+                                                        )}
+                                                    </Label>
+                                                    <Input
+                                                        name={field.label}
+                                                        type="file"
+                                                        placeholder={field.placeholder}
+                                                        required={field.required}
+                                                        className="bg-transparent"
+                                                        onBlur={handleInputChange}
+                                                        disabled={isPending}
+                                                    />
+                                                </div>
+                                                :
+                                                <div className='w-full my-3 space-y-2'>
+                                                    <Label className='text-gray-500 flex items-center gap-2'>
+                                                        {field.label}
+                                                        {!field.required && (
+                                                            <span>(Optional)</span>
+                                                        )}
+                                                    </Label>
+                                                    <Input
+                                                        name={field.label}
+                                                        type={field.fieldType}
+                                                        placeholder={field.placeholder}
+                                                        required={field.required}
+                                                        className="bg-transparent"
+                                                        onBlur={handleInputChange}  // now only fires once, when focus leaves
+                                                        disabled={isPending}
+                                                    />
 
-                                        </div>
+                                                </div>
                         }
                         {isEditable && (
-                            <div>
-                                <EditForm
-                                    defaultValue={field}
-                                    updateField={(field) => onFieldUpdate(field, index)}
-                                    deletedField={() => onDeletedField(index)}
-                                />
-                            </div>
+                            <EditForm
+                                defaultValue={field}
+                                updateField={(field) => onFieldUpdate(field, index)}
+                                deletedField={() => onDeletedField(index)}
+                            />
                         )}
                     </div>
                 )}
