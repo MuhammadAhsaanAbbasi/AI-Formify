@@ -69,13 +69,13 @@ export default function FormWrapper({ form_id }: { form_id: string }) {
                 <FormUi
                     formData={jsonForm}
                     onFieldUpdate={() => console.log}
-                    onFieldsAdd={() => console.log}
                     onDeletedField={() => console.log}
                     selectedStyle={selectedStyle}
                     selectedTheme={record.theme ?? undefined}
                     isEditable={false}
                     enabledSignIn={Boolean(record.enabledSignIn)}
                     form_id={form_id}
+                    onReorder={() => console.log}
                 />
             </div>
         </main>

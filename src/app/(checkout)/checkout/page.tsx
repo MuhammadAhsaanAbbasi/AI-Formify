@@ -1,8 +1,11 @@
 import React from 'react'
+import CheckoutTier from '@/components/widget/CheckoutTier'
 
 const CheckOutPage = () => {
   return (
-    <div>CheckOutPage</div>
+    <main>
+      <CheckoutTier />
+    </main>
   )
 }
 

@@ -97,6 +97,15 @@ const FormEdit = ({ form_id }: { form_id: string }) => {
         });
     };
 
+    const onReorderField = (newItems: FormField[]) => {
+        jsonFormData.fields = newItems;
+        setJsonFormData(jsonFormData);
+        setUpdateTrigger({
+            time: Date.now(),
+            payload: JSON.stringify(jsonFormData),
+        });
+    };
+
     const UpdateControllers = async (val: unknown, column: string) => {
         const req = await updateControllerFields(val, column, form_id, UserId);
         if (req?.success) {
@@ -215,9 +224,10 @@ const FormEdit = ({ form_id }: { form_id: string }) => {
                         formData={jsonFormData}
                         onFieldUpdate={onFieldUpdate}
                         onDeletedField={onFieldDeleted}
-                        onFieldsAdd={onFieldsAdd}
+                        // onFieldsAdd={onFieldsAdd}
                         selectedTheme={selectedTheme}
                         selectedStyle={selectedStyle}
+                        onReorder={onReorderField}
                         form_id={form_id}
                     />
                 </div>

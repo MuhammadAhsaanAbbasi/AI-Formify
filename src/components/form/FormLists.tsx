@@ -15,6 +15,7 @@ const FormLists = () => {
         const formData = async () => {
             setLoading(true);
             const response = await getFormsData(UserId);
+            console.log(`form Response : ${(response.error)}`);
             if (response.success) {
                 setFormList(response.success);
             }
