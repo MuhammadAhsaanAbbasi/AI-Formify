@@ -9,6 +9,8 @@ import { Transactions } from '@/utils/schema';
 import moment from 'moment';
 // import { connectToDatabase } from '../database/mongoose';
 // import Transaction from '../database/models/transaction.model';
+import { checkoutFormSchema } from "@/schemas/checkout";
+import { z } from "zod";
 
 export async function checkoutCredits(transaction: CheckoutTransactionParams) {
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
@@ -60,3 +62,19 @@ export async function createTransaction(transaction: CreateTransactionParams) {
         handleError(error)
     }
 }
+
+
+export const checkoutTier = async (userId: string, values: z.infer<typeof checkoutFormSchema>) => {
+    const isValidated = checkoutFormSchema.safeParse(values);
+
+    if(!isValidated.success) return { error: isValidated.error.errors[0].message };
+
+    const {emailOrPhone, newsletter, firstName, lastName, screenshot, plan} = isValidated.data;
+
+    try {
+        console.log(emailOrPhone, newsletter, firstName, lastName, screenshot, plan);
+        return {success: true, message: "Checkout Successfully!!"}
+    } catch (error) {
+        handleError(error)
+    }
+};

@@ -31,4 +31,4 @@ export const checkoutFormSchema = z.object({
 });
 
 /** Inferred TypeScript type for easy use elsewhere */
-export type CheckoutFormValues = z.infer<typeof checkoutFormSchema>;
+// export type CheckoutFormValues = z.infer<typeof checkoutFormSchema>;

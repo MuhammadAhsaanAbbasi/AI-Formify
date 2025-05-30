@@ -5,9 +5,9 @@ import { Checkbox } from '../ui/checkbox';
 import { Button } from '../ui/button';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { checkoutFormSchema, CheckoutFormValues } from '@/schemas/checkout';
+import { checkoutFormSchema } from '@/schemas/checkout';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
-import { checkoutTier } from '@/lib/actions/checkout.actions';
+import { checkoutTier } from '@/lib/actions/transaction.actions';
 import { useUser } from '@clerk/nextjs';
 import { toast } from '@/hooks/use-toast';
 import { ToastAction } from '../ui/toast';
@@ -36,9 +36,9 @@ const CheckoutForm = ({ name }: { name: string }) => {
         }
     });
 
-    const onSubmit = async (data: z.infer<typeof checkoutFormSchema>) => {
+    function onSubmit(data: z.infer<typeof checkoutFormSchema>) {
         startTransition(async () => {
-            checkoutTier(data, UserId)
+            checkoutTier(UserId, data)
                 .then((res) => {
                     if (res?.error) {
                         toast({
@@ -64,7 +64,17 @@ const CheckoutForm = ({ name }: { name: string }) => {
                         })
                         router.push(`/checkout/success`);
                     }
-                }).catch((err) => console.log(`error: ${err}`))
+                }).catch((err) => {
+                    toast({
+                        title: "Error!",
+                        description: err?.message,
+                        duration: 2000,
+                        variant: "destructive",
+                        action: (
+                            <ToastAction altText="Close">Close</ToastAction>
+                        ),
+                    })
+                })
                 .finally(() => {
                     form.reset();
                 })
@@ -201,20 +211,22 @@ const CheckoutForm = ({ name }: { name: string }) => {
                             return (
                                 <FormItem className="flex flex-col gap-1">
                                     <FormLabel
-                                        htmlFor="ScreenShot"
+                                        htmlFor="screenshot"
                                         className="font-medium text-lg"
                                     >
                                         ScreenShot
                                     </FormLabel>
                                     <FormControl>
                                         <Input
-                                            {...rest}
+                                            {...rest}           // name, ref, onBlur
                                             id="screenshot"
                                             type="file"
-                                            multiple={false}
                                             accept="image/*"
-                                            /*  ⤵️  pass *only* the first file (or undefined)                    */
-                                            onChange={e => rest.onChange(e.target.files?.[0])}
+                                            multiple={false}
+                                            value={undefined}   // keep it uncontrolled ←✅
+                                            onChange={(e) =>
+                                                rest.onChange((e.target.files?.item(0) as File) /* File | undefined */)
+                                            }
                                             disabled={isPending}
                                         />
                                     </FormControl>
@@ -254,17 +266,15 @@ const CheckoutForm = ({ name }: { name: string }) => {
                         )}
                     />
 
-                    <div>
-                        <Button disabled={isPending}>
-                            {
-                                isPending ? (
-                                    <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
-                                ) : (
-                                    <span>Checkout</span>
-                                )
-                            }
-                        </Button>
-                    </div>
+                    <Button disabled={isPending}>
+                        {
+                            isPending ? (
+                                <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                            ) : (
+                                <span>Checkout</span>
+                            )
+                        }
+                    </Button>
                 </div>
             </form>
         </Form>
