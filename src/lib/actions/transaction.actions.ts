@@ -49,11 +49,11 @@ export async function createTransaction(transaction: CreateTransactionParams) {
 
         // Create a new transaction with a buyerId
         const newTransaction = await db.insert(Transactions)
-        .values({
-            ...transaction,
-            createdAt: moment().format('DD/MM/yyyy')
-        })
-        .returning();
+            .values({
+                ...transaction,
+                createdAt: moment().format('DD/MM/yyyy')
+            })
+            .returning();
 
         await updateCredits(transaction.buyerId, transaction.limit);
 
@@ -64,17 +64,33 @@ export async function createTransaction(transaction: CreateTransactionParams) {
 }
 
 
-export const checkoutTier = async (userId: string, values: z.infer<typeof checkoutFormSchema>) => {
-    const isValidated = checkoutFormSchema.safeParse(values);
+export const checkoutTier = async (userId: string, formData: FormData) => {
+    const screenshotFile = formData.get("screenshot") as File | null;
 
-    if(!isValidated.success) return { error: isValidated.error.errors[0].message };
+    const data = {
+        emailOrPhone: (formData.get("emailOrPhone") as string | null) ?? "",
+        newsletter: formData.get("newsletter") === "true"          // <- coerce
+            || formData.get("newsletter") === "on",
+        firstName: (formData.get("firstName") as string | null) ?? "",
+        lastName: (formData.get("lastName") as string | null) ?? "",
+        plan: (formData.get("plan") as string | null) ?? "",
+        screenshot: screenshotFile,                                 // File | null
+    };
 
-    const {emailOrPhone, newsletter, firstName, lastName, screenshot, plan} = isValidated.data;
+    const validated = checkoutFormSchema.safeParse(data);
+
+    if (!validated.success) {
+        return { error: validated.error.errors[0].message };
+    }
+    const { emailOrPhone, newsletter, firstName, lastName, screenshot, plan } = validated.data;
 
     try {
-        console.log(emailOrPhone, newsletter, firstName, lastName, screenshot, plan);
-        return {success: true, message: "Checkout Successfully!!"}
+        console.log(emailOrPhone, newsletter, firstName, lastName, screenshot, plan, userId);
+        return { success: true, message: "Checkout Successfully!!" }
     } catch (error) {
-        handleError(error)
+        if (error instanceof Error) {
+            return { error: "Invalid credentials!", message: error.message };
+        }
+        return { message: error }
     }
 };

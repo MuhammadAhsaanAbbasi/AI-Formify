@@ -22,7 +22,7 @@ const CheckoutForm = ({ name }: { name: string }) => {
 
     const router = useRouter();
 
-    const UserId = user?.id as string;
+    const userId = user?.id as string;
 
     const form = useForm<z.infer<typeof checkoutFormSchema>>({
         resolver: zodResolver(checkoutFormSchema),
@@ -37,8 +37,16 @@ const CheckoutForm = ({ name }: { name: string }) => {
     });
 
     function onSubmit(data: z.infer<typeof checkoutFormSchema>) {
-        startTransition(async () => {
-            checkoutTier(UserId, data)
+        const formdata = new FormData();
+        formdata.append("emailOrPhone", data.emailOrPhone);
+        formdata.append("newsletter", String(data?.newsletter as boolean));
+        formdata.append("firstName", data.firstName);
+        formdata.append("lastName", data.lastName);
+        formdata.append("screenshot", data.screenshot as File);
+        formdata.append("plan", data.plan);
+        startTransition(() => {
+            console.log(`data: ${Object.values(data)}`);
+            checkoutTier(userId, formdata)
                 .then((res) => {
                     if (res?.error) {
                         toast({
@@ -73,11 +81,12 @@ const CheckoutForm = ({ name }: { name: string }) => {
                         action: (
                             <ToastAction altText="Close">Close</ToastAction>
                         ),
-                    })
-                })
-                .finally(() => {
-                    form.reset();
-                })
+                    });
+                    console.error(`Error: ${err}`);
+                });
+                // .finally(() => {
+                //     form.reset();
+                // });
         })
     };
 
@@ -86,6 +95,7 @@ const CheckoutForm = ({ name }: { name: string }) => {
             <form
                 className="space-y-8 bg-gray-100 p-6 border rounded-lg"
                 onSubmit={form.handleSubmit(onSubmit)}
+
             >
                 {/* Contact Section */}
                 <div className="space-y-4">
@@ -218,14 +228,14 @@ const CheckoutForm = ({ name }: { name: string }) => {
                                     </FormLabel>
                                     <FormControl>
                                         <Input
-                                            {...rest}           // name, ref, onBlur
+                                            {...field}           // name, ref, onBlur
                                             id="screenshot"
                                             type="file"
                                             accept="image/*"
                                             multiple={false}
                                             value={undefined}   // keep it uncontrolled ←✅
                                             onChange={(e) =>
-                                                rest.onChange((e.target.files?.item(0) as File) /* File | undefined */)
+                                                field.onChange((e.target.files && e.target.files.item(0) as File) || undefined /* File | undefined */)
                                             }
                                             disabled={isPending}
                                         />

@@ -22,10 +22,10 @@ export const checkoutFormSchema = z.object({
   lastName: z.string().trim().min(1, "Last name is required"),
 
   /** Screenshot (exactly one image file) */
-  screenshot: z.instanceof(File, {
-    message: "Screenshot is required",
-  }).refine((file) => file.size <= 5 * 1024 * 1024, "Max file size is 5MB"),
-
+   screenshot: z
+    .custom<File>((f) => f instanceof File && f.size <= 5 * 1024 * 1024, {
+      message: "Screenshot (≤ 5 MB) is required",
+    }),
   /** Plan (readonly in the UI but still validated) */
   plan: z.string().min(1, "Plan is required"),
 });
