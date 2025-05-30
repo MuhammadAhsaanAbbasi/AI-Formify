@@ -1,10 +1,5 @@
 "use client";
 import Image from "next/image"
-import { ShoppingBag, Info, HelpCircle } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { tiers } from "@/constants/constants"
 import { useSearchParams } from "next/navigation"
 import { useState } from "react"
@@ -12,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible"
+import CheckoutForm from "../shared/CheckoutForm";
 
 export default function CheckoutTier() {
   const [selectedPayment, setSelectedPayment] = useState("bank");
@@ -72,16 +68,20 @@ export default function CheckoutTier() {
               </div>
 
               {/* Bank/Binance Account Details */}
-              <div className="w-full max-w-2xl mx-auto">
+              <div className="w-full max-w-2xl mx-auto pt-10">
                 <div className="mb-6">
-                  <h1 className="text-2xl font-semibold text-gray-900 mb-2">Payment</h1>
-                  <p className="text-gray-600">All transactions are secure and encrypted.</p>
+                  <h1 className="text-2xl font-semibold text-gray-900 mb-2">
+                    Payment
+                  </h1>
+                  <p className="text-[#75758B]">
+                    All transactions are secure and encrypted.
+                  </p>
                 </div>
 
                 <RadioGroup value={selectedPayment} onValueChange={setSelectedPayment} className="space-y-0">
 
                   {/* Jazzcash / Easypaisa */}
-                  <div className="border border-gray-200">
+                  <div className="border border-gray-200 rounded-t-lg">
                     <div className="flex items-center space-x-3 p-4">
                       <RadioGroupItem value="bank" id="bank" />
                       <Label htmlFor="bank" className="text-gray-900 cursor-pointer">
@@ -93,13 +93,38 @@ export default function CheckoutTier() {
                       <CollapsibleContent>
                         <div className="px-4 py-4 border border-gray-200">
                           <Card className="bg-gray-50 border-gray-200">
-                            <CardContent className="p-4">
-                              <p className="text-gray-700 mb-3">Deposit Payment directly to our bank account :</p>
-                              <div className="space-y-1 text-gray-800">
-                                <p className="font-medium">HABIB BANK LIMITED</p>
-                                <p>ACCOUNT # 0056 - 7901283203</p>
-                                <p>IBAN # PK06HABB0000567901283203</p>
-                                <p>Title : M/S MANHATTAN TECH</p>
+                            <CardContent className="p-4 space-y-3">
+                              <p className="text-[#75758B]">
+                                Deposit Payment directly to our bank account :
+                              </p>
+                              <div className="space-y-1 text-[#75758B]">
+                                <h6 className="font-medium">
+                                  NAYAPAY
+                                </h6>
+                                <h6 className="flex items-center gap-1">
+                                  <span>
+                                    ACCOUNT #
+                                  </span>
+                                  <span>
+                                    03492047381
+                                  </span>
+                                </h6>
+                                <h6 className="space-x-1">
+                                  <span>
+                                    IBAN #
+                                  </span>
+                                  <span>
+                                    PK24NAYA1234503492047381
+                                  </span>
+                                </h6>
+                                <h6 className="space-x-1">
+                                  <span>
+                                    Account Title :
+                                  </span>
+                                  <span>
+                                    Muhammad Ahsaan Abbasi
+                                  </span>
+                                </h6>
                               </div>
                             </CardContent>
                           </Card>
@@ -121,13 +146,27 @@ export default function CheckoutTier() {
                       <CollapsibleContent>
                         <div className="px-4 py-4 border border-gray-200">
                           <Card className="bg-gray-50 border-gray-200">
-                            <CardContent className="p-4">
-                              <p className="text-gray-700 mb-3">Deposit Payment directly to our bank account :</p>
-                              <div className="space-y-1 text-gray-800">
-                                <p className="font-medium">HABIB BANK LIMITED</p>
-                                <p>ACCOUNT # 0056 - 7901283203</p>
-                                <p>IBAN # PK06HABB0000567901283203</p>
-                                <p>Title : M/S MANHATTAN TECH</p>
+                            <CardContent className="p-4 space-y-3">
+                              <p className="text-[#75758B]">
+                                Deposit Payment directly through Crypto Coins :
+                              </p>
+                              <div className="space-y-1">
+                                <h6 className="flex items-center gap-1 text-[#75758B]">
+                                  <span className="font-medium">
+                                    TRC20:
+                                  </span>
+                                  <span>
+                                    TCtQ6ZXrsUXWPVZ9xjbyrQ18Cjc19xnnzM
+                                  </span>
+                                </h6>
+                                <h6 className="flex items-center gap-1 text-[#75758B]">
+                                  <span className="font-medium">
+                                    Solana:
+                                  </span>
+                                  <span>
+                                    hDCkgr18ubXjbqvt16vmvjuN5Qt3tx6XuYbiZ3z8VV9
+                                  </span>
+                                </h6>
                               </div>
                             </CardContent>
                           </Card>
@@ -137,65 +176,17 @@ export default function CheckoutTier() {
                   </div>
                 </RadioGroup>
               </div>
+
+              {/* Note */}
+              <div className="flex flex-col justify-center gap-0.5">
+                <h4 className="text-lg font-semibold text-red-600">Note :</h4>
+                <p className="text-sm font-medium text-[#75758B]">Before CheckOut, Make Sure transfer the support Amount & attached screenshot of the payment</p>
+              </div>
             </div>
           </div>
 
           {/* Left Column - Contact & Delivery */}
-          <div className="space-y-8 bg-gray-100 p-6 border rounded-lg">
-            {/* Contact Section */}
-            <div className="space-y-4">
-              <h2 className="text-xl font-bold">
-                Contact
-              </h2>
-              <Input type="text" placeholder="Email or mobile phone number" className="w-full" />
-              <div className="flex items-start gap-2">
-                <Checkbox id="newsletter" className="mt-1" />
-                <label htmlFor="newsletter" className="text-sm">
-                  Email me with news and offers
-                </label>
-              </div>
-            </div>
-
-            {/* Delivery Section */}
-            {/* <div>
-              <h2 className="text-xl font-bold mb-4">Delivery</h2>
-              <div className="space-y-4">
-                <div className="relative">
-                  <Select defaultValue="pakistan">
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Country/Region" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="pakistan">Pakistan</SelectItem>
-                      <SelectItem value="india">India</SelectItem>
-                      <SelectItem value="bangladesh">Bangladesh</SelectItem>
-                      <SelectItem value="srilanka">Sri Lanka</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <Input type="text" placeholder="First name" />
-                  <Input type="text" placeholder="Last name" />
-                </div>
-
-                <Input type="text" placeholder="Address" />
-                <Input type="text" placeholder="Apartment, suite, etc. (optional)" />
-
-                <div className="grid grid-cols-2 gap-4">
-                  <Input type="text" placeholder="City" />
-                  <Input type="text" placeholder="Postal code (optional)" />
-                </div>
-
-                <div className="relative">
-                  <Input type="text" placeholder="Phone" />
-                  <button className="absolute right-3 top-1/2 -translate-y-1/2">
-                    <HelpCircle className="h-5 w-5 text-gray-400" />
-                  </button>
-                </div>
-              </div>
-            </div> */}
-          </div>
+          <CheckoutForm name={(filterCheckout?.name as string)} />
         </div>
       </main>
     </div>

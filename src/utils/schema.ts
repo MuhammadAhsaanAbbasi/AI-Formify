@@ -59,6 +59,7 @@ export const Transactions = pgTable('transactions', {
     amount:integer('amount').notNull(),
     limit:integer('limit').notNull(),
     plan:varchar('plan').notNull(),
+    screeshot:varchar('screeshot'),
     buyerId:integer('buyerId').notNull(),
     createdAt:varchar('createdAt').notNull(),
 })  
