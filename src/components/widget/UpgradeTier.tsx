@@ -1,50 +1,14 @@
-"use client";
-import { useUser } from '@clerk/nextjs';
-import { useRouter } from 'next/navigation'
-import { loadStripe } from "@stripe/stripe-js";
-import { useEffect } from "react";
-import { toast } from '@/hooks/use-toast';
-import { checkoutCredits } from '@/lib/actions/transaction.actions';
+// "use client";
+// import { useUser } from '@clerk/nextjs';
+// import { useRouter } from 'next/navigation'
+// import { loadStripe } from "@stripe/stripe-js";
+// import { useEffect } from "react";
+// import { toast } from '@/hooks/use-toast';
+// import { checkoutCredits } from '@/lib/actions/transaction.actions';
 import { CheckIcon } from '@heroicons/react/20/solid'
 import Link from 'next/link';
+import { tiers } from '@/constants/constants';
 
-
-const tiers = [
-  {
-    id: 45445,
-    name: 'Monthly',
-    slag: 'tier-monthly',
-    href: '#',
-    duration: "month",
-    price: '$6',
-    description: "The perfect plan if you're just getting started with our product.",
-    features: ['10 forms',
-      'Advanced analytics',
-      '24-hour support response time',
-      'Early Access on few new features',
-    ],
-    featured: false,
-    limit: 10,
-  },
-  {
-    id: 45446,
-    name: 'Yearly',
-    slag: 'tier-yearly',
-    href: '#',
-    price: '$45',
-    duration: "year",
-    description: 'Dedicated support and infrastructure for your company.',
-    features: [
-      'Unlimited products',
-      'Advanced analytics',
-      'Newsletter feature',
-      'Dedicated support representative',
-      'Early Access to all new features',
-    ],
-    featured: true,
-    limit: 100,
-  },
-]
 
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(' ')

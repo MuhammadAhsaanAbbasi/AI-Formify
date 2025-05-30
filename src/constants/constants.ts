@@ -657,3 +657,41 @@ export const styles = [
         key:'border'
     }
 ]
+
+
+export const tiers = [
+  {
+    id: 2112399764,
+    name: 'Monthly',
+    slag: 'tier-monthly',
+    href: '#',
+    duration: "month",
+    price: '$6',
+    description: "The perfect plan if you're just getting started with our product.",
+    features: ['10 forms',
+      'Advanced analytics',
+      '24-hour support response time',
+      'Early Access on few new features',
+    ],
+    featured: false,
+    limit: 10,
+  },
+  {
+    id: 9954141771,
+    name: 'Yearly',
+    slag: 'tier-yearly',
+    href: '#',
+    price: '$45',
+    duration: "year",
+    description: 'Dedicated support and infrastructure for your company.',
+    features: [
+      'Unlimited products',
+      'Advanced analytics',
+      'Newsletter feature',
+      'Dedicated support representative',
+      'Early Access to all new features',
+    ],
+    featured: true,
+    limit: 100,
+  },
+]

@@ -62,7 +62,7 @@ export const metadata: Metadata = {
   },
 };
 
-const CheckOutLayout = ({ children }: Readonly<{ children: ReactNode }>) => {
+const SpecializeFormLayout = ({ children }: Readonly<{ children: ReactNode }>) => {
     return (
         <main>
             {children}
@@ -70,4 +70,4 @@ const CheckOutLayout = ({ children }: Readonly<{ children: ReactNode }>) => {
     );
 };
 
-export default CheckOutLayout;
+export default SpecializeFormLayout;
