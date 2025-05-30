@@ -50,8 +50,8 @@ const CheckoutForm = ({ name }: { name: string }) => {
                 .then((res) => {
                     if (res?.error) {
                         toast({
-                            title: "Form Failed",
-                            description: res?.error,
+                            title: res?.error,
+                            description: res?.message,
                             duration: 2000,
                             variant: "destructive",
                             action: (
