@@ -9,8 +9,7 @@ import { NewTransaction, Transactions } from '@/utils/schema';
 import moment from 'moment';
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { v4 as uuid } from "uuid";
+// import { v4 as uuid } from "uuid";
 import { s3 } from "@/lib/utils";
 import { checkoutFormSchema } from "@/schemas/checkout";
 import { z } from "zod";
@@ -110,9 +109,7 @@ export const checkoutTier = async (userId: string, formData: FormData) => {
             await upload.done();                                 // handles retries
 
             // ---------- 3.  Build a URL ----------
-            const screenshotUrl = process.env.AWS_S3_PUBLIC === "true"
-                ? `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${Key}`
-                : await getSignedUrl(s3, new PutObjectCommand({ Bucket: process.env.AWS_S3_BUCKET!, Key }), { expiresIn: 60 * 60 }); // 1 h URL
+            const screenshotUrl = `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${Key}`;
 
             console.log(emailOrPhone, newsletter, firstName, lastName, screenshotUrl, plan, userId);
 

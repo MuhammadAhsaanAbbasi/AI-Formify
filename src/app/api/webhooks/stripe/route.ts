@@ -29,6 +29,10 @@ export async function POST(request: Request) {
 
         const user = await getUserById(buyerId);
 
+        if (!user) {
+            return NextResponse.json({ message: "User not found" });
+        }
+
         const transaction = {
             stripeId: id,
             amount: amount_total ? amount_total / 100 : 0,
