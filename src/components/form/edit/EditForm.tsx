@@ -30,7 +30,7 @@ interface EditFormProps {
 
 const EditForm = ({ defaultValue, updateField, deletedField }: EditFormProps) => {
     const [label, setLabel] = useState(defaultValue.label);
-    const [placeholder, setPlaceholder] = useState(defaultValue.placeholder);
+    const [placeholder, setPlaceholder] = useState(defaultValue?.placeholder);
     const [options, setOptions] = useState(defaultValue.options || []);
     const [openDialog, setOpenDialog] = useState(false);
 

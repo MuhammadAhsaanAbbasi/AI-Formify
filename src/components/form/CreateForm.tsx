@@ -59,8 +59,8 @@ const CreateForm = ({disable}: {disable: boolean}) => {
                     setSuccess(data.success);
                     if (data?.error) {
                         toast({
-                            title: "Form Failed",
-                            description: data.error,
+                            title: data.error,
+                            description: data.message,
                             duration: 2000,
                             variant: "destructive",
                             action: (
