@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { InferInsertModel, relations } from "drizzle-orm";
 import { boolean, integer, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
 
 
@@ -20,14 +20,14 @@ export const usersRelations = relations(User, ({ many }) => ({
 
 export const Forms = pgTable("forms", {
     id: serial("id").primaryKey(),
-    jsonFormResp: text("jsonFormResp").notNull(), 
-    theme:varchar('theme'),
-    background:varchar('background'),
-    style:varchar('style'),
+    jsonFormResp: text("jsonFormResp").notNull(),
+    theme: varchar('theme'),
+    background: varchar('background'),
+    style: varchar('style'),
     user_id: integer('user_id'),
     createdAt: varchar("createdAt"),
     mockID: varchar("mockID").notNull(),
-    enabledSignIn:boolean('enabledSignIn').default(false),
+    enabledSignIn: boolean('enabledSignIn').default(false),
 })
 
 export const FormRelations = relations(Forms, ({ one, many }) => ({
@@ -39,10 +39,10 @@ export const FormRelations = relations(Forms, ({ one, many }) => ({
 }));
 
 export const userResponses = pgTable('userResponses', {
-    id:serial('id').primaryKey(),
-    jsonResponse:text('jsonResponse').notNull(),
-    createdBy:varchar('createdBy').default('anonymus'),
-    createdAt:varchar('createdAt').notNull(),
+    id: serial('id').primaryKey(),
+    jsonResponse: text('jsonResponse').notNull(),
+    createdBy: varchar('createdBy').default('anonymus'),
+    createdAt: varchar('createdAt').notNull(),
     form_id: integer('form_id'),
 })
 
@@ -54,19 +54,22 @@ export const UserResponseRelations = relations(userResponses, ({ one }) => ({
 }))
 
 export const Transactions = pgTable('transactions', {
-    id:serial('id').primaryKey(),
-    stripeId:varchar('stripeId').notNull(),
-    amount:integer('amount').notNull(),
-    limit:integer('limit').notNull(),
-    plan:varchar('plan').notNull(),
-    screeshot:varchar('screeshot'),
-    buyerId:integer('buyerId').notNull(),
-    createdAt:varchar('createdAt').notNull(),
-})  
+    id: serial('id').primaryKey(),
+    stripeId: varchar('stripeId').notNull(),
+    amount: integer('amount').notNull(),
+    limit: integer('limit').notNull(),
+    plan: varchar('plan').notNull(),
+    screenshot: varchar('screenshot'),
+    buyerId: integer('buyerId').notNull(),
+    createdAt: varchar('createdAt').notNull(),
+})
+
 
 export const TransactionRelations = relations(Transactions, ({ one }) => ({
     user: one(User, {
         fields: [Transactions.buyerId],
         references: [User.id],
     }),
-}))
+}));
+
+export type NewTransaction = InferInsertModel<typeof Transactions>;

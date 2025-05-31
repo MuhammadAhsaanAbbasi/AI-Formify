@@ -12,7 +12,7 @@ export async function createUser(user: CreateUserParams) {
     try {
 
         const newUser = await db.insert(User)
-        .values(user);
+            .values(user);
 
         return JSON.parse(JSON.stringify(newUser));
     } catch (error) {
@@ -23,14 +23,13 @@ export async function createUser(user: CreateUserParams) {
 // READ
 export async function getUserById(userId: string) {
     try {
-
-        const user = await db.select()
-        .from(User)
-        .where(eq(User.clerkId, userId));
+        const [user] = await db
+            .select()
+            .from(User)
+            .where(eq(User.clerkId, userId));
 
         if (!user) throw new Error("User not found");
-
-        return JSON.parse(JSON.stringify(user[0]));
+        return user;
     } catch (error) {
         handleError(error);
     }
@@ -41,9 +40,9 @@ export async function updateUser(clerkId: string, user: UpdateUserParams) {
     try {
 
         const updatedUser = await db.update(User)
-        .set(user)
-        .where(eq(User.clerkId, clerkId))
-        .returning();
+            .set(user)
+            .where(eq(User.clerkId, clerkId))
+            .returning();
 
         if (!updatedUser) throw new Error("User update failed");
 
@@ -59,8 +58,8 @@ export async function deleteUser(clerkId: string) {
 
         // Find user to delete
         const userToDelete = await db.select()
-        .from(User)
-        .where(eq(User.clerkId, clerkId));
+            .from(User)
+            .where(eq(User.clerkId, clerkId));
 
         if (!userToDelete) {
             throw new Error("User not found");
@@ -68,8 +67,8 @@ export async function deleteUser(clerkId: string) {
 
         // Delete user
         const deletedUser = await db.delete(User)
-        .where(eq(User.id, userToDelete[0].id))
-        .returning();
+            .where(eq(User.id, userToDelete[0].id))
+            .returning();
 
         revalidatePath("/");
 
@@ -83,9 +82,9 @@ export const updateCredits = async (user_id: number, limits: number) => {
     try {
 
         const updatedUser = await db.update(User)
-        .set({ limit: limits })
-        .where(eq(User.id, user_id))
-        .returning();
+            .set({ limit: limits })
+            .where(eq(User.id, user_id))
+            .returning();
 
         if (!updatedUser) throw new Error("User update failed");
 
