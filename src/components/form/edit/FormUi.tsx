@@ -176,9 +176,9 @@ const FormUi = ({ formData, form_id, onReorder, onFieldUpdate, selectedStyle, se
                         {
                             field.fieldType == "select" ?
                                 <div className='w-full my-3'>
-                                    <Label className='text-gray-500'>{field.label}</Label>
+                                    <Label className=''>{field.fieldTitle}</Label>
                                     <Select required={field.required} name={field.fieldName}
-                                        onValueChange={(e) => handleSelectChange(field.label, e)}
+                                        onValueChange={(e) => handleSelectChange(field.fieldTitle, e)}
                                         disabled={isPending}
                                     >
                                         <SelectTrigger className="w-full bg-transparent">
@@ -196,7 +196,7 @@ const FormUi = ({ formData, form_id, onReorder, onFieldUpdate, selectedStyle, se
                                 :
                                 field.fieldType == "radio" ?
                                     <div className='w-full my-3'>
-                                        <Label className='text-gray-500'>{field.label}</Label>
+                                        <Label className=''>{field.fieldTitle}</Label>
                                         <RadioGroup required={field.required} defaultValue={field.fieldTitle}
                                             disabled={isPending}
                                         >
@@ -205,7 +205,7 @@ const FormUi = ({ formData, form_id, onReorder, onFieldUpdate, selectedStyle, se
                                                     <RadioGroupItem
                                                         value={option}
                                                         id={index.toString()}
-                                                        onClick={() => handleSelectChange(field.label, option)}
+                                                        onClick={() => handleSelectChange(field.fieldTitle, option)}
                                                     >
                                                         {option}
                                                     </RadioGroupItem>
@@ -217,11 +217,11 @@ const FormUi = ({ formData, form_id, onReorder, onFieldUpdate, selectedStyle, se
                                     :
                                     field.fieldType == "checkbox" ?
                                         <div className='w-full my-3 space-y-2'>
-                                            <Label className='text-gray-500'>{field.label}</Label>
+                                            <Label className=''>{field.fieldTitle}</Label>
                                             {field.options ? field.options.map((option, index) => (
                                                 <div key={index} className="flex items-center gap-2 my-2">
                                                     <Checkbox id={option} disabled={isPending}
-                                                        onCheckedChange={(e) => handleCheckBoxChange(field.label, e, option)}
+                                                        onCheckedChange={(e) => handleCheckBoxChange(field.fieldName, e, option)}
                                                     />
                                                     <label
                                                         htmlFor={option}
@@ -233,28 +233,28 @@ const FormUi = ({ formData, form_id, onReorder, onFieldUpdate, selectedStyle, se
                                             ))
                                                 :
                                                 <div className="flex items-center gap-2 my-2">
-                                                    <Checkbox id={field.fieldName}
-                                                        onCheckedChange={(e) => handleCheckBoxChange(field.label, e, field.fieldName)}
+                                                    <Checkbox id={field.fieldName}  
+                                                        onCheckedChange={(e) => handleCheckBoxChange(field.fieldName, e, field.fieldName)}
                                                         disabled={isPending} />
                                                     <label
                                                         htmlFor={field.fieldName}
                                                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                                                     >
-                                                        {field.label}
+                                                        {field.fieldTitle}
                                                     </label>
                                                 </div>
                                             }
                                         </div>
                                         : field.fieldType == "textarea" ?
                                             <div className='w-full my-3 space-y-2'>
-                                                <Label className='text-gray-500 flex items-center gap-2'>
-                                                    {field.label}
+                                                <Label className='flex items-center gap-2'>
+                                                    {field.fieldTitle}
                                                     {!field.required && (
                                                         <span>(Optional)</span>
                                                     )}
                                                 </Label>
                                                 <Textarea
-                                                    name={field.label}
+                                                    name={field.fieldTitle}
                                                     placeholder={field.placeholder}
                                                     required={field.required}
                                                     className="bg-transparent"
@@ -265,14 +265,14 @@ const FormUi = ({ formData, form_id, onReorder, onFieldUpdate, selectedStyle, se
                                             :
                                             field.fieldType == "file" ?
                                                 <div className='w-full my-3 space-y-2'>
-                                                    <Label className='text-gray-500 flex items-center gap-2'>
-                                                        {field.label}
+                                                    <Label className='flex items-center gap-2'>
+                                                        {field.fieldTitle}
                                                         {!field.required && (
                                                             <span>(Optional)</span>
                                                         )}
                                                     </Label>
                                                     <Input
-                                                        name={field.label}
+                                                        name={field.fieldTitle}
                                                         type="file"
                                                         placeholder={field.placeholder}
                                                         required={field.required}
@@ -283,14 +283,14 @@ const FormUi = ({ formData, form_id, onReorder, onFieldUpdate, selectedStyle, se
                                                 </div>
                                                 :
                                                 <div className='w-full my-3 space-y-2'>
-                                                    <Label className='text-gray-500 flex items-center gap-2'>
-                                                        {field.label}
+                                                    <Label className='flex items-center gap-2'>
+                                                        {field.fieldTitle}
                                                         {!field.required && (
-                                                            <span>(Optional)</span>
+                                                            <span>(Optional)</span> 
                                                         )}
                                                     </Label>
                                                     <Input
-                                                        name={field.label}
+                                                        name={field.fieldTitle}
                                                         type={field.fieldType}
                                                         placeholder={field.placeholder}
                                                         required={field.required}
